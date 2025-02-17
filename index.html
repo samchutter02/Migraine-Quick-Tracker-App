@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Migraine Episode Logger</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /*
+      Darker, broader color gradient for the background.
+      We'll animate it for a subtle swirling effect.
+    */
+        body {
+            background: linear-gradient(120deg,
+                    #1b0035,
+                    #4a148c,
+                    #8e24aa,
+                    #c51162);
+            background-size: 300% 300%;
+            animation: gradientBG 20s ease infinite;
+            font-family: 'Inter', sans-serif;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Simple styling for the mini bar chart */
+        .bar {
+            display: inline-block;
+            width: 10px;
+            margin-right: 5px;
+            background-color: rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen text-white flex flex-col items-center justify-center p-4">
+
+    <!-- Title / Header -->
+    <h1 class="text-center text-4xl md:text-5xl font-extrabold mb-8">
+        Migraine Episode Logger
+    </h1>
+
+    <!-- Container for modular symmetrical layout -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl w-full">
+
+        <!-- Quick Log Card -->
+        <div id="quickLogCard"
+            class="glass-card p-6 rounded-xl shadow-xl flex flex-col transition transform hover:scale-105 cursor-pointer"
+            onclick="toggleAdvancedCard(true)">
+            <h2 class="text-2xl font-bold mb-3">Quick Log</h2>
+            <p class="text-sm mb-4 flex-1">
+                In a hurry? Tap below to log a migraine episode instantly.
+            </p>
+            <button
+                class="w-full py-3 mt-auto rounded-md bg-pink-600 hover:bg-pink-500 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-pink-300 transition"
+                onclick="logQuickEpisode(event)">
+                Log Migraine
+            </button>
+        </div>
+
+        <!-- Advanced Details Card -->
+        <div id="advancedCard"
+            class="glass-card p-6 rounded-xl shadow-xl hidden flex flex-col transition transform hover:scale-105">
+            <h2 class="text-2xl font-bold mb-3">Advanced Details</h2>
+
+            <!-- Date / Time -->
+            <div class="mb-4">
+                <label for="dateTime" class="block mb-1">Date/Time</label>
+                <input id="dateTime" type="datetime-local"
+                    class="w-full p-2 rounded-md bg-white/20 border-none outline-none backdrop-blur-sm" />
+            </div>
+
+            <!-- Pain Intensity Slider -->
+            <div class="mb-4">
+                <label for="painSlider" class="block mb-1">Pain Intensity (1-10)</label>
+                <input type="range" id="painSlider" min="1" max="10" value="5" class="w-full">
+                <p id="painValue" class="text-center mt-1">5</p>
+            </div>
+
+            <!-- Medication Input -->
+            <div class="mb-4">
+                <label for="medication" class="block mb-1">Medication Taken</label>
+                <input id="medication" type="text" placeholder="e.g. Ibuprofen 400mg"
+                    class="w-full p-2 rounded-md bg-white/20 border-none outline-none backdrop-blur-sm" />
+            </div>
+
+            <!-- Common Triggers -->
+            <div class="mb-4">
+                <p class="mb-1">Common Triggers</p>
+                <div class="flex flex-wrap gap-2">
+                    <button class="px-3 py-1 bg-purple-600/60 rounded-full hover:bg-purple-400/80 text-sm"
+                        data-trigger="Bright Light">Bright Light</button>
+                    <button class="px-3 py-1 bg-purple-600/60 rounded-full hover:bg-purple-400/80 text-sm"
+                        data-trigger="Stress">Stress</button>
+                    <button class="px-3 py-1 bg-purple-600/60 rounded-full hover:bg-purple-400/80 text-sm"
+                        data-trigger="Noise">Noise</button>
+                    <button class="px-3 py-1 bg-purple-600/60 rounded-full hover:bg-purple-400/80 text-sm"
+                        data-trigger="Food">Food</button>
+                    <button class="px-3 py-1 bg-purple-600/60 rounded-full hover:bg-purple-400/80 text-sm"
+                        data-trigger="Other">Other</button>
+                </div>
+            </div>
+
+            <!-- Save / Cancel Buttons -->
+            <div class="flex justify-end gap-3 mt-auto">
+                <button class="px-4 py-2 rounded-md bg-gray-300/20 hover:bg-gray-200/20 text-sm"
+                    onclick="toggleAdvancedCard(false)">
+                    Cancel
+                </button>
+                <button
+                    class="px-4 py-2 rounded-md bg-pink-600 hover:bg-pink-500 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-pink-300 transition"
+                    onclick="saveAdvancedLog()">
+                    Save
+                </button>
+            </div>
+        </div>
+
+        <!-- History / Summary Card (spans both columns on medium+ screens) -->
+        <div class="glass-card p-6 rounded-xl shadow-xl md:col-span-2 flex flex-col">
+            <h2 class="text-2xl font-bold mb-3">Recent Logs</h2>
+            <ul id="logHistory" class="space-y-1 text-sm mb-4">
+                <!-- Example logs -->
+                <li class="opacity-80">09:15 AM – Pain: 6 – Stress</li>
+                <li class="opacity-80">Yesterday 04:30 PM – Pain: 4 – Noise</li>
+            </ul>
+            <!-- Simple Bar Chart to show last 7 logs' intensity -->
+            <div>
+                <p class="mb-1 text-lg font-semibold">Pain Intensity (Last 7 Logs)</p>
+                <div id="barChart" class="flex items-end h-16 gap-1">
+                    <!-- Bars appended dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // For advanced details triggers
+        let chosenTrigger = "N/A";
+        document.querySelectorAll("[data-trigger]").forEach(btn => {
+            btn.addEventListener("click", () => {
+                chosenTrigger = btn.dataset.trigger;
+            });
+        });
+
+        // Pain slider
+        const painSlider = document.getElementById("painSlider");
+        const painValue = document.getElementById("painValue");
+        painSlider.addEventListener("input", (e) => {
+            painValue.textContent = e.target.value;
+        });
+
+        // Quick log
+        function logQuickEpisode(e) {
+            // Stop event from toggling advanced card
+            e.stopPropagation();
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const newEntry = document.createElement("li");
+            newEntry.textContent = `${timeString} – Pain: 5 – Quick Log`;
+            document.getElementById("logHistory").prepend(newEntry);
+
+            // Update chart data
+            updateChart(5);
+            alert("Quick migraine log saved!");
+        }
+
+        // Toggle advanced card
+        function toggleAdvancedCard(show) {
+            const advancedCard = document.getElementById("advancedCard");
+            if (show) {
+                advancedCard.classList.remove("hidden");
+            } else {
+                advancedCard.classList.add("hidden");
+            }
+        }
+
+        // Save advanced log
+        function saveAdvancedLog() {
+            const dtValue = document.getElementById("dateTime").value;
+            const dt = dtValue ? dtValue : "Now";
+            const pain = painSlider.value;
+            const med = document.getElementById("medication").value || "No meds";
+
+            // Create log entry
+            const newEntry = document.createElement("li");
+            newEntry.textContent = `${dt} – Pain: ${pain} – ${med} – ${chosenTrigger}`;
+            document.getElementById("logHistory").prepend(newEntry);
+
+            // Update chart data
+            updateChart(pain);
+
+            alert("Advanced migraine log saved!");
+            toggleAdvancedCard(false);
+        }
+
+        // Bar chart data
+        let lastSevenLogs = [6, 4]; // example data from initial logs
+
+        // Render bars in the chart
+        function updateChart(value) {
+            // Insert new value at start
+            lastSevenLogs.unshift(parseInt(value, 10));
+            // Keep only 7
+            if (lastSevenLogs.length > 7) {
+                lastSevenLogs.pop();
+            }
+
+            // Re-render bars
+            const barChart = document.getElementById("barChart");
+            barChart.innerHTML = "";
+            lastSevenLogs.forEach(val => {
+                const barEl = document.createElement("div");
+                barEl.className = "bar";
+                // Scale bar height: val=10 => 100% of container height
+                const percent = (val / 10) * 100;
+                barEl.style.height = percent + "%";
+                barChart.appendChild(barEl);
+            });
+        }
+
+        // Initialize chart
+        updateChart(0);
+    </script>
+</body>
+
+</html>
