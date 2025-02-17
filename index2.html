@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Migraine Logger (v2.4)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Dark, migraine-friendly blue-gray gradient background */
+        body {
+            background: linear-gradient(120deg, #0d1b2a, #1b263b, #415a77, #778da9);
+            background-size: 300% 300%;
+            animation: gradientBG 25s ease infinite;
+            font-family: 'Inter', sans-serif;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Frosty glass-card style */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        /* Tab button styling */
+        .tab-btn {
+            @apply inline-block px-4 py-2 border-b-2 font-medium text-sm cursor-pointer;
+        }
+
+        .tab-btn.active {
+            @apply border-blue-400 text-blue-300;
+        }
+
+        .tab-btn.inactive {
+            @apply border-transparent hover:text-blue-300;
+        }
+
+        /* Pill styling for meds and triggers (if needed) */
+        .pill {
+            @apply px-3 py-1 rounded-full text-xs font-medium border border-white/20 cursor-pointer transition;
+        }
+
+        .pill.selected {
+            @apply bg-blue-700 text-white border-transparent;
+        }
+
+        /* Bar chart styling */
+        .bar {
+            display: inline-block;
+            width: 10px;
+            margin-right: 4px;
+            background-color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Modal backdrop */
+        .modal-backdrop {
+            background: rgba(0, 0, 0, 0.6);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen text-white flex items-center justify-center p-4">
+    <!-- Main Container: Tabbed Layout -->
+    <div class="max-w-2xl w-full glass-card rounded-xl shadow-xl p-6 flex flex-col relative">
+        <!-- Settings Icon -->
+        <button id="openSettings" class="absolute top-4 right-4 focus:outline-none" title="Settings">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-300 hover:text-blue-400" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M11.049 2.927c.3-.921 1.603-.921 1.902 0a1.724 1.724 0 002.573 1.066c.788-.57 1.87.163 1.54 1.043a1.724 1.724 0 001.066 2.573c.921.3.921 1.603 0 1.902a1.724 1.724 0 00-1.066 2.573c.33.88-.752 1.613-1.54 1.043a1.724 1.724 0 00-2.573 1.066c-.3.921-1.603.921-1.902 0a1.724 1.724 0 00-2.573-1.066c-.788.57-1.87-.163-1.54-1.043a1.724 1.724 0 00-1.066-2.573c-.921-.3-.921-1.603 0-1.902a1.724 1.724 0 001.066-2.573c-.33-.88.752-1.613 1.54-1.043.986.714 2.44.337 2.573-1.066z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+        </button>
+        <h1 class="text-3xl font-extrabold text-center mb-4">Migraine Logger v2.4</h1>
+        <!-- Tabs -->
+        <div class="flex justify-center gap-6 mb-6 border-b border-white/20">
+            <button class="tab-btn active" data-target="quickTab" onclick="switchTab(event)">Quick Log</button>
+            <button class="tab-btn inactive" data-target="advancedTab" onclick="switchTab(event)">Advanced</button>
+            <button class="tab-btn inactive" data-target="historyTab" onclick="switchTab(event)">History</button>
+        </div>
+        <!-- Tab Content -->
+        <div class="flex-1">
+            <!-- Quick Log Tab -->
+            <div id="quickTab" class="tab-content">
+                <p class="mb-4 text-center">Tap the large button below to quickly log a migraine.</p>
+                <button
+                    class="w-full h-24 rounded-lg bg-blue-700 hover:bg-blue-600 text-2xl font-bold focus:outline-none focus:ring-4 focus:ring-blue-400 transition"
+                    onclick="logQuickEpisode()">
+                    LOG
+                </button>
+                <!-- Optional Voice Note (placeholder) -->
+                <button
+                    class="mt-4 w-full h-12 rounded-lg bg-blue-800 hover:bg-blue-700 text-lg font-medium focus:outline-none focus:ring-4 focus:ring-blue-400 transition"
+                    onclick="alert('Voice note feature coming soon!')">
+                    Record Voice Note
+                </button>
+            </div>
+            <!-- Advanced Tab -->
+            <div id="advancedTab" class="hidden tab-content flex flex-col gap-4">
+                <p class="mb-2">Enter detailed information for this episode.</p>
+                <!-- Date/Time -->
+                <div>
+                    <label for="dateTime" class="block mb-1">Date/Time</label>
+                    <input id="dateTime" type="datetime-local"
+                        class="w-full p-2 rounded-md bg-white/20 border-none outline-none backdrop-blur-sm" />
+                </div>
+                <!-- Pain Intensity -->
+                <div>
+                    <label for="painSlider" class="block mb-1">Pain Intensity (1-10)</label>
+                    <input type="range" id="painSlider" min="1" max="10" value="5" class="w-full">
+                    <p id="painValue" class="text-center mt-1">5</p>
+                </div>
+                <!-- Medications (Pills) -->
+                <div>
+                    <p class="mb-1">Select Medication(s) Taken</p>
+                    <div class="flex flex-wrap gap-2" id="medPills">
+                        <span class="pill" data-med="Ibuprofen">Ibuprofen</span>
+                        <span class="pill" data-med="Acetaminophen">Acetaminophen</span>
+                        <span class="pill" data-med="Aspirin">Aspirin</span>
+                        <span class="pill" data-med="Triptan">Triptan</span>
+                        <span class="pill" data-med="None">None</span>
+                    </div>
+                    <!-- Selected Medications Field -->
+                    <div id="selectedMedsContainer" class="flex flex-wrap gap-2 mt-2"></div>
+                </div>
+                <!-- Triggers (Pills) -->
+                <div>
+                    <p class="mb-1">Select Trigger(s)</p>
+                    <div class="flex flex-wrap gap-2" id="triggerPills">
+                        <span class="pill" data-trigger="Bright Light">Bright Light</span>
+                        <span class="pill" data-trigger="Stress">Stress</span>
+                        <span class="pill" data-trigger="Noise">Noise</span>
+                        <span class="pill" data-trigger="Food">Food</span>
+                        <span class="pill" data-trigger="Other">Other</span>
+                    </div>
+                    <!-- Selected Triggers Field -->
+                    <div id="selectedTriggersContainer" class="flex flex-wrap gap-2 mt-2"></div>
+                </div>
+                <!-- Save Advanced Log -->
+                <div class="mt-auto">
+                    <button
+                        class="px-4 py-2 w-full rounded-md bg-blue-700 hover:bg-blue-600 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                        onclick="saveAdvancedLog()">
+                        Save
+                    </button>
+                </div>
+            </div>
+            <!-- History Tab -->
+            <div id="historyTab" class="hidden tab-content flex flex-col gap-4">
+                <p class="font-semibold mb-1">Recent Logs</p>
+                <ul id="logHistory" class="space-y-1 text-sm mb-2">
+                    <li class="log-entry quick opacity-80">09:15 AM – Pain: 5 – Quick Log</li>
+                    <li class="log-entry advanced opacity-80">Yesterday 04:30 PM – Pain: 4 – Acetaminophen, Aspirin –
+                        Stress, Noise</li>
+                </ul>
+                <div>
+                    <p class="mb-1 text-lg font-semibold">Pain Intensity (Last 7 Logs)</p>
+                    <div id="barChart" class="flex items-end h-16 gap-1">
+                        <!-- Bars appended dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 flex items-center justify-center hidden z-50">
+        <div class="absolute inset-0 modal-backdrop"></div>
+        <div class="relative glass-card rounded-xl p-6 max-w-sm w-full">
+            <h2 class="text-2xl font-bold mb-4">Default Settings</h2>
+            <!-- Default Pain Intensity -->
+            <div class="mb-4">
+                <label for="defaultPain" class="block mb-1">Default Pain Intensity (1-10)</label>
+                <input id="defaultPain" type="number" min="1" max="10" value="5"
+                    class="w-full p-2 rounded-md bg-white/20 border-none outline-none" />
+            </div>
+            <!-- Default Medication -->
+            <div class="mb-4">
+                <p class="mb-1">Default Medication</p>
+                <div class="flex flex-wrap gap-2" id="defaultMedPills">
+                    <span class="pill" data-med="Ibuprofen">Ibuprofen</span>
+                    <span class="pill" data-med="Acetaminophen">Acetaminophen</span>
+                    <span class="pill" data-med="Aspirin">Aspirin</span>
+                    <span class="pill" data-med="Triptan">Triptan</span>
+                    <span class="pill" data-med="None">None</span>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2">
+                <button class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-sm"
+                    onclick="closeSettings()">Cancel</button>
+                <button class="px-4 py-2 rounded-md bg-blue-700 hover:bg-blue-600 text-sm font-semibold"
+                    onclick="saveDefaultSettings()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Icon Handler -->
+    <script>
+        // Pre-configured defaults
+        let defaultPain = 5;
+        let defaultMed = "None";
+
+        document.getElementById("openSettings").addEventListener("click", () => {
+            document.getElementById("settingsModal").classList.remove("hidden");
+        });
+        function closeSettings() {
+            document.getElementById("settingsModal").classList.add("hidden");
+        }
+        // Handle default medication pill selection in settings modal
+        let selectedDefaultMed = "";
+        document.querySelectorAll("#defaultMedPills .pill").forEach(pill => {
+            pill.addEventListener("click", () => {
+                selectedDefaultMed = pill.dataset.med;
+                // Toggle selection visually
+                document.querySelectorAll("#defaultMedPills .pill").forEach(el => el.classList.remove("selected"));
+                pill.classList.add("selected");
+            });
+        });
+        function saveDefaultSettings() {
+            const painInput = document.getElementById("defaultPain").value;
+            defaultPain = painInput ? painInput : 5;
+            defaultMed = selectedDefaultMed || defaultMed;
+            alert("Default settings saved!");
+            closeSettings();
+        }
+
+        // Tab switching logic
+        function switchTab(e) {
+            document.querySelectorAll(".tab-btn").forEach(btn => {
+                btn.classList.remove("active");
+                btn.classList.add("inactive");
+            });
+            e.target.classList.add("active");
+            e.target.classList.remove("inactive");
+            document.querySelectorAll(".tab-content").forEach(tc => tc.classList.add("hidden"));
+            const targetID = e.target.dataset.target;
+            document.getElementById(targetID).classList.remove("hidden");
+        }
+
+        // Handle medication pills selection in Advanced tab
+        let selectedMeds = [];
+        function updateSelectedMeds() {
+            const container = document.getElementById("selectedMedsContainer");
+            container.innerHTML = "";
+            selectedMeds.forEach(med => {
+                const pill = document.createElement("span");
+                pill.className = "pill selected";
+                pill.textContent = med + " ✕";
+                pill.dataset.med = med;
+                pill.addEventListener("click", () => {
+                    selectedMeds = selectedMeds.filter(m => m !== med);
+                    updateSelectedMeds();
+                    document.querySelectorAll("#medPills .pill").forEach(el => {
+                        if (el.dataset.med === med) {
+                            el.classList.remove("selected");
+                        }
+                    });
+                });
+                container.appendChild(pill);
+            });
+        }
+        document.querySelectorAll("#medPills .pill").forEach(pill => {
+            pill.addEventListener("click", () => {
+                const med = pill.dataset.med;
+                if (selectedMeds.includes(med)) {
+                    selectedMeds = selectedMeds.filter(m => m !== med);
+                    pill.classList.remove("selected");
+                } else {
+                    selectedMeds.push(med);
+                    pill.classList.add("selected");
+                }
+                updateSelectedMeds();
+            });
+        });
+
+        // Handle trigger pills selection in Advanced tab
+        let selectedTriggers = [];
+        function updateSelectedTriggers() {
+            const container = document.getElementById("selectedTriggersContainer");
+            container.innerHTML = "";
+            selectedTriggers.forEach(trigger => {
+                const pill = document.createElement("span");
+                pill.className = "pill selected";
+                pill.textContent = trigger + " ✕";
+                pill.dataset.trigger = trigger;
+                pill.addEventListener("click", () => {
+                    selectedTriggers = selectedTriggers.filter(t => t !== trigger);
+                    updateSelectedTriggers();
+                    document.querySelectorAll("#triggerPills .pill").forEach(el => {
+                        if (el.dataset.trigger === trigger) {
+                            el.classList.remove("selected");
+                        }
+                    });
+                });
+                container.appendChild(pill);
+            });
+        }
+        document.querySelectorAll("#triggerPills .pill").forEach(pill => {
+            pill.addEventListener("click", () => {
+                const trigger = pill.dataset.trigger;
+                if (selectedTriggers.includes(trigger)) {
+                    selectedTriggers = selectedTriggers.filter(t => t !== trigger);
+                    pill.classList.remove("selected");
+                } else {
+                    selectedTriggers.push(trigger);
+                    pill.classList.add("selected");
+                }
+                updateSelectedTriggers();
+            });
+        });
+
+        // Pain slider update
+        const painSlider = document.getElementById("painSlider");
+        const painValue = document.getElementById("painValue");
+        painSlider.addEventListener("input", (e) => {
+            painValue.textContent = e.target.value;
+        });
+
+        // Quick Log: Log with defaults from settings
+        function logQuickEpisode() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            // Use defaults for pain and med
+            const newEntry = document.createElement("li");
+            newEntry.classList.add("log-entry", "quick");
+            newEntry.textContent = `${timeString} – Pain: ${defaultPain} – Med: ${defaultMed} – Quick Log`;
+            document.getElementById("logHistory").prepend(newEntry);
+            updateChart(defaultPain);
+            alert("Quick migraine log saved using your defaults!");
+        }
+
+        // Save Advanced Log
+        function saveAdvancedLog() {
+            const dtValue = document.getElementById("dateTime").value;
+            const dt = dtValue ? dtValue : "Now";
+            const pain = painSlider.value;
+            const meds = selectedMeds.length ? selectedMeds.join(", ") : "No meds";
+            const triggers = selectedTriggers.length ? selectedTriggers.join(", ") : "No triggers";
+            const newEntry = document.createElement("li");
+            newEntry.classList.add("log-entry", "advanced");
+            newEntry.textContent = `${dt} – Pain: ${pain} – ${meds} – ${triggers}`;
+            document.getElementById("logHistory").prepend(newEntry);
+            updateChart(pain);
+            alert("Advanced migraine log saved!");
+        }
+
+        // Bar chart data and update
+        let lastSevenLogs = [6, 4]; // initial dummy data
+        function updateChart(value) {
+            lastSevenLogs.unshift(parseInt(value, 10));
+            if (lastSevenLogs.length > 7) lastSevenLogs.pop();
+            const barChart = document.getElementById("barChart");
+            barChart.innerHTML = "";
+            lastSevenLogs.forEach(val => {
+                const barEl = document.createElement("div");
+                barEl.className = "bar";
+                const percent = (val / 10) * 100;
+                barEl.style.height = percent + "%";
+                barChart.appendChild(barEl);
+            });
+        }
+        updateChart(0);
+    </script>
+</body>
+
+</html>
