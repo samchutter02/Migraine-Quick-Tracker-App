@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Migraine Logger v2.6</title>
+    <title>Quick Track</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Static dark, migraine-friendly blue-gray gradient background */
@@ -361,30 +361,30 @@
     <div id="editLogModal" class="fixed inset-0 flex items-center justify-center hidden z-50">
         <div class="absolute inset-0 modal-backdrop"></div>
         <div class="relative glass-card rounded-xl p-6 max-w-sm w-full">
-            <h2 class="text-2xl font-bold mb-4">Edit Log Entry</h2>
+            <h2 class="text-2xl font-bold mb-4 text-white">Edit Log Entry</h2>
             <div>
-                <label for="painInput" class="block mb-1">Pain (1-10)</label>
+                <label for="painInput" class="block mb-1 text-white">Pain (1-10)</label>
                 <input id="painInput" type="number" min="1" max="10"
                     class="w-full p-2 rounded-md bg-white/20 border-none outline-none">
             </div>
             <div class="mt-4">
-                <label for="auraDurationInput" class="block mb-1">Aura Duration (minutes)</label>
+                <label for="auraDurationInput" class="block mb-1 text-white">Aura Duration (minutes)</label>
                 <input id="auraDurationInput" type="number" min="0"
                     class="w-full p-2 rounded-md bg-white/20 border-none outline-none">
             </div>
             <div class="mt-4">
-                <label for="triggersInput" class="block mb-1">Triggers (comma separated)</label>
+                <label for="triggersInput" class="block mb-1 text-white">Triggers (comma separated)</label>
                 <input id="triggersInput" type="text"
                     class="w-full p-2 rounded-md bg-white/20 border-none outline-none">
             </div>
             <div class="mt-4">
-                <label for="auraDescriptionInput" class="block mb-1">Aura Description</label>
+                <label for="auraDescriptionInput" class="block mb-1 text-white">Aura Description</label>
                 <textarea id="auraDescriptionInput" rows="3"
                     class="w-full p-2 rounded-md bg-white/20 border-none outline-none"></textarea>
             </div>
             <div class="mt-4 flex items-center">
                 <input id="auraHeadacheInput" type="checkbox" class="form-checkbox text-blue-600">
-                <label for="auraHeadacheInput" class="ml-2">Aura followed by headache?</label>
+                <label for="auraHeadacheInput" class="ml-2 text-white">Aura followed by headache?</label>
             </div>
             <div class="flex justify-end gap-2 mt-4">
                 <button id="cancelEditLog" class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-white"
