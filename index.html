@@ -7,10 +7,15 @@
     <title>Migraine Logger v2.6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Static dark, migraine-friendly blue-gray gradient background */
+        /* Static dark, migraine-friendly blue-gray gradient background for main pages */
         body {
             background: linear-gradient(120deg, #0d1b2a, #1b263b, #415a77, #778da9);
             font-family: 'Inter', sans-serif;
+        }
+
+        /* Landing page gets its own background image */
+        #landingPage {
+            background: url('img/bg3.jpg') center/cover no-repeat;
         }
 
         /* Frosty glass-card style */
@@ -50,8 +55,7 @@
             background-color: rgba(255, 255, 255, 0.1);
             color: #fff;
             transition: background-color 0.2s ease, border-color 0.2s ease;
-            overflow: hidden;
-            white-space: nowrap;
+            white-space: normal;
         }
 
         .pill:hover {
@@ -73,7 +77,7 @@
             padding: 0.5rem;
         }
 
-        /* Photo Selection styling */
+        /* Photo selection styling */
         .photo-select {
             width: 100px;
             height: 100px;
@@ -132,7 +136,7 @@
             @apply bg-white/10 p-4 rounded-md;
         }
 
-        /* Custom range slider styling */
+        /* Range slider styling remains unchanged */
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
@@ -159,12 +163,11 @@
             cursor: pointer;
         }
 
-        /* Modal backdrop */
         .modal-backdrop {
             background: rgba(0, 0, 0, 0.6);
         }
 
-        /* Landing page state */
+        /* Landing page and Main app states */
         #landingPage {
             position: fixed;
             inset: 0;
@@ -177,7 +180,6 @@
             pointer-events: none;
         }
 
-        /* Main app state */
         #mainApp {
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
@@ -190,24 +192,24 @@
 </head>
 
 <body class="min-h-screen">
-    <!-- Landing Page -->
+    <!-- Redesigned Landing Page -->
     <div id="landingPage" class="flex items-center justify-center p-4">
-        <div class="max-w-3xl w-full bg-white/10 p-8 rounded-xl shadow-xl glass-card">
-            <h1 class="text-4xl font-bold text-center text-white mb-8">Migraine Logger v2.6</h1>
-            <div class="flex flex-col gap-4">
-                <button
-                    class="w-full h-16 bg-blue-700 hover:bg-blue-600 text-2xl font-bold rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-400 text-white"
-                    onclick="logQuickEpisode()">Quick Log</button>
-                <button
-                    class="w-full h-16 bg-green-700 hover:bg-green-600 text-2xl font-bold rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-green-400 text-white"
-                    onclick="startAdvancedLog()">Advanced Log</button>
-                <button
-                    class="w-full h-16 bg-purple-700 hover:bg-purple-600 text-2xl font-bold rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-400 text-white"
-                    onclick="startHistory()">History</button>
+        <div class="bg-black bg-opacity-60 p-8 rounded-xl shadow-2xl max-w-3xl w-full text-center">
+            <h1 class="text-5xl font-extrabold text-white mb-4">Welcome to Migraine Logger</h1>
+            <p class="text-xl text-gray-200 mb-8">Track your migraine experiences with ease and precision.</p>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                <button onclick="logQuickEpisode()"
+                    class="w-full md:w-auto h-16 bg-blue-700 hover:bg-blue-600 text-2xl font-bold rounded-lg shadow-lg px-6 py-3 focus:outline-none focus:ring-4 focus:ring-blue-400 text-white">Quick
+                    Log</button>
+                <button onclick="startAdvancedLog()"
+                    class="w-full md:w-auto h-16 bg-green-700 hover:bg-green-600 text-2xl font-bold rounded-lg shadow-lg px-6 py-3 focus:outline-none focus:ring-4 focus:ring-green-400 text-white">Advanced
+                    Log</button>
+                <button onclick="startHistory()"
+                    class="w-full md:w-auto h-16 bg-purple-700 hover:bg-purple-600 text-2xl font-bold rounded-lg shadow-lg px-6 py-3 focus:outline-none focus:ring-4 focus:ring-purple-400 text-white">History</button>
             </div>
-            <p class="mt-8 text-center text-white text-xl">Select your desired logging mode or view your data.</p>
         </div>
     </div>
+    <!-- End Landing Page -->
 
     <!-- Main Application (initially hidden) -->
     <div id="mainApp" class="min-h-screen text-white flex items-center justify-center p-4">
@@ -227,7 +229,7 @@
                 </svg>
             </button>
             <h1 class="text-3xl font-extrabold text-center mb-4 mt-10">Migraine Logger v2.6</h1>
-            <!-- Tabs Navigation (Analytics tab removed) -->
+            <!-- Tabs Navigation (Analytics removed) -->
             <div class="flex justify-center gap-4 mb-6 border-b border-white/20">
                 <button class="tab-btn active" data-target="advancedTab"
                     onclick="activateTab('advancedTab')">Advanced</button>
@@ -321,6 +323,18 @@
                             <div class="photo-select" data-photo="img/aura4.jpg">
                                 <img src="img/aura4.jpg" alt="Aura 4">
                             </div>
+                            <div class="photo-select" data-photo="img/aura5.jpg">
+                                <img src="img/aura5.jpg" alt="Aura 5">
+                            </div>
+                            <div class="photo-select" data-photo="img/aura6.jpg">
+                                <img src="img/aura6.jpg" alt="Aura 6">
+                            </div>
+                            <div class="photo-select" data-photo="img/aura7.jpg">
+                                <img src="img/aura7.jpg" alt="Aura 7">
+                            </div>
+                            <div class="photo-select" data-photo="img/aura8.jpg">
+                                <img src="img/aura8.jpg" alt="Aura 8">
+                            </div>
                         </div>
                         <div class="mt-6">
                             <button id="wizardSubmit"
@@ -357,7 +371,6 @@
         </div>
     </div>
 
-    <!-- Settings Modal (Default Medication UI updated for multi-select) -->
     <div id="settingsModal" class="fixed inset-0 flex items-center justify-center hidden z-50">
         <div class="absolute inset-0 modal-backdrop"></div>
         <div class="relative glass-card rounded-xl p-6 max-w-sm w-full">
@@ -481,7 +494,7 @@
                 triggers: "Not set",
                 auraDescription: "Not set",
                 auraHeadache: "Not set",
-                photos: [] // No photos for quick log
+                photos: []
             };
             addLogEntry(logEntry);
             updateChart(0, false);
@@ -503,7 +516,6 @@
             activateTab('historyTab');
         }
 
-        // Back to Home function for main app
         function goHome() {
             document.getElementById('mainApp').classList.remove('visible');
             document.getElementById('landingPage').classList.remove('hidden');
@@ -520,7 +532,6 @@
         function saveDefaultSettings() {
             const painInput = document.getElementById("defaultPain").value;
             defaultPain = painInput ? painInput : 5;
-            // Use the selectedDefaultMed array; if empty, default to ["None"]
             defaultMed = selectedDefaultMed.length > 0 ? selectedDefaultMed : ["None"];
             document.getElementById("defaultPainValue").textContent = defaultPain;
             alert("Default settings saved!");
@@ -557,7 +568,6 @@
                 e.target.classList.toggle("selected");
                 updateWizardMedSelections();
             }
-            // Delegate photo selection clicks for wizardStep3
             const photoEl = e.target.closest(".photo-select");
             if (photoEl && photoEl.parentElement.id === "photoSelection") {
                 photoEl.classList.toggle("selected");
@@ -593,7 +603,6 @@
             });
         }
 
-        // Support three wizard steps (including photo selection as Step 3)
         function activateWizardStep(step) {
             if (step === 1) {
                 document.getElementById("wizardStep1").classList.remove("hidden");
@@ -651,16 +660,12 @@
             addLogEntry(logEntry);
             updateChart(0, false);
             alert("Advanced migraine log saved!");
-            // Reset wizard selections
             wizardAuraSelections = [];
             wizardMedSelections = [];
             wizardPhotoSelections = [];
-            const auraButtons = document.querySelectorAll("#auraPillsWizard .pill");
-            auraButtons.forEach(btn => btn.classList.remove("selected"));
-            const medButtons = document.querySelectorAll("#medPillsWizard .pill");
-            medButtons.forEach(btn => btn.classList.remove("selected"));
-            const photoButtons = document.querySelectorAll("#photoSelection .photo-select");
-            photoButtons.forEach(btn => btn.classList.remove("selected"));
+            document.querySelectorAll("#auraPillsWizard .pill").forEach(btn => btn.classList.remove("selected"));
+            document.querySelectorAll("#medPillsWizard .pill").forEach(btn => btn.classList.remove("selected"));
+            document.querySelectorAll("#photoSelection .photo-select").forEach(btn => btn.classList.remove("selected"));
             goHome();
         }
         // --- End Advanced Log Wizard Functions ---
@@ -819,52 +824,17 @@
             submitAdvancedLog();
         }
 
-        // --- Chart Functions (placeholder) ---
+        // Placeholder Chart Function (does nothing in this version)
         function updateChart(pain, auraFlag) {
-            // Placeholder function – functionality remains unchanged
+            // No functionality here.
         }
         updateChart(0, false);
 
-        // --- Analytics Dashboard Report (unused since analytics page is removed) ---
-        function updateAnalyticsDashboard() {
-            let totalLogs = logEntries.length;
-            let quickCount = logEntries.filter(log => log.quick).length;
-            let advancedCount = totalLogs - quickCount;
-            let auraCount = logEntries.filter(log => log.aura && log.aura.trim() !== "").length;
-            let advancedLogsWithPain = logEntries.filter(log => !log.quick && log.pain && log.pain !== "Not set").map(log => parseInt(log.pain, 10));
-            let avgPain = advancedLogsWithPain.length ? (advancedLogsWithPain.reduce((a, b) => a + b, 0) / advancedLogsWithPain.length).toFixed(2) : "N/A";
-            // This function is no longer used as the analytics page is scrapped.
-        }
-
-        function generateReport() {
-            let reportHTML = "<h3 class='text-xl font-bold mb-2'>Detailed Migraine Report</h3>";
-            reportHTML += "<p>This report summarizes your migraine tracking data:</p>";
-            const totalLogs = logEntries.length;
-            const quickLogs = logEntries.filter(log => log.quick).length;
-            const advancedLogs = totalLogs - quickLogs;
-            const auraEvents = logEntries.filter(log => log.aura && log.aura.trim() !== "").length;
-            const advancedLogsWithPain = logEntries.filter(log => !log.quick && log.pain && log.pain !== "Not set");
-            const avgPain = advancedLogsWithPain.length ? (advancedLogsWithPain.reduce((acc, cur) => acc + parseInt(cur.pain, 10), 0) / advancedLogsWithPain.length).toFixed(2) : "N/A";
-            reportHTML += `
-        <ul class="list-disc ml-6">
-          <li>Total Logs: ${totalLogs}</li>
-          <li>Quick Logs (Aura Only): ${quickLogs}</li>
-          <li>Advanced Logs: ${advancedLogs}</li>
-          <li>Aura Events Recorded: ${auraEvents}</li>
-          <li>Average Pain (Advanced Logs): ${avgPain}</li>
-        </ul>`;
-            reportHTML += "<p><strong>Correlation Matrix:</strong> Analyze data from aura logs, sleep patterns, weather, stress, and dietary inputs to reveal your strongest migraine triggers.</p>";
-            reportHTML += "<p><strong>Medication Efficacy:</strong> Your logs indicate that [Medication Name] on average reduces pain by [dummy percentage] over time.</p>";
-            reportHTML += "<p>This report is shareable with your healthcare provider for a more informed discussion about your migraine management plan.</p>";
-            document.getElementById("detailedReport").innerHTML = reportHTML;
-        }
-
-        // --- Photo modal functions ---
+        // Photo modal functions
         function openPhotoModal(url) {
             document.getElementById("photoModalImg").src = url;
             document.getElementById("photoModal").classList.remove("hidden");
         }
-
         function closePhotoModal() {
             document.getElementById("photoModal").classList.add("hidden");
         }
@@ -953,6 +923,18 @@
                 </div>
                 <div class="photo-select" data-photo="img/aura4.jpg">
                     <img src="img/aura4.jpg" alt="Aura 4">
+                </div>
+                <div class="photo-select" data-photo="img/aura5.jpg">
+                    <img src="img/aura5.jpg" alt="Aura 5">
+                </div>
+                <div class="photo-select" data-photo="img/aura6.jpg">
+                    <img src="img/aura6.jpg" alt="Aura 6">
+                </div>
+                <div class="photo-select" data-photo="img/aura7.jpg">
+                    <img src="img/aura7.jpg" alt="Aura 7">
+                </div>
+                <div class="photo-select" data-photo="img/aura8.jpg">
+                    <img src="img/aura8.jpg" alt="Aura 8">
                 </div>
             </div>
             <div class="mt-6">
