@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Migraine Logger v2.6</title>
+    <title>Index</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Static dark, migraine-friendly blue-gray gradient background for main pages */
@@ -136,7 +136,7 @@
             @apply bg-white/10 p-4 rounded-md;
         }
 
-        /* Range slider styling remains unchanged */
+        /* Custom range slider styling */
         input[type="range"] {
             -webkit-appearance: none;
             width: 100%;
@@ -167,6 +167,19 @@
             background: rgba(0, 0, 0, 0.6);
         }
 
+        /* Ensure full-screen blurred background on main app pages */
+        #mainApp::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            filter: blur(8px);
+            z-index: -1;
+        }
+
         /* Landing page and Main app states */
         #landingPage {
             position: fixed;
@@ -193,20 +206,38 @@
 
 <body class="min-h-screen">
     <!-- Redesigned Landing Page -->
-    <div id="landingPage" class="flex items-center justify-center p-4">
-        <div class="bg-black bg-opacity-60 p-8 rounded-xl shadow-2xl max-w-3xl w-full text-center">
-            <h1 class="text-5xl font-extrabold text-white mb-4">Welcome to Migraine Logger</h1>
-            <p class="text-xl text-gray-200 mb-8">Track your migraine experiences with ease and precision.</p>
-            <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+    <div id="landingPage" class="min-h-screen flex items-center justify-center p-4">
+        <!-- Header Card containing the title, buttons, etc. -->
+        <div class="bg-black bg-opacity-60 p-8 rounded-xl shadow-2xl max-w-3xl w-full text-center relative">
+            <!-- New Settings Icon inside the header card (no label underneath) -->
+            <button id="openSettingsLanding" class="absolute top-4 right-4 focus:outline-none" title="Settings">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-300 hover:text-blue-400" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11.049 2.927c.3-.921 1.603-.921 1.902 0a1.724 1.724 0 002.573 1.066c.788-.57 1.87.163 1.54 1.043a1.724 1.724 0 001.066 2.573c.921.3.921 1.603 0 1.902a1.724 1.724 0 00-1.066 2.573c.33.88-.752 1.613-1.54 1.043a1.724 1.724 0 00-2.573 1.066c-.3.921-1.603.921-1.902 0a1.724 1.724 0 00-2.573-1.066c-.788.57-1.87-.163-1.54-1.043a1.724 1.724 0 00-1.066-2.573c-.921-.3-.921-1.603 0-1.902a1.724 1.724 0 001.066-2.573c-.33-.88.752-1.613 1.54-1.043.986.714 2.44.337 2.573-1.066z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </button>
+            <h1 class="text-5xl font-extrabold text-white mb-4">QuickTrack Migraine Logger</h1>
+            <p class="text-2xl text-gray-200 mb-4">Track your migraine episodes with a single tap.</p>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-4 mb-4">
                 <button onclick="logQuickEpisode()"
-                    class="w-full md:w-auto h-16 bg-blue-700 hover:bg-blue-600 text-2xl font-bold rounded-lg shadow-lg px-6 py-3 focus:outline-none focus:ring-4 focus:ring-blue-400 text-white">Quick
-                    Log</button>
+                    class="w-full md:w-auto h-16 bg-blue-700 hover:bg-blue-600 text-2xl font-bold rounded-lg shadow-lg px-6 py-3 focus:outline-none focus:ring-4 focus:ring-blue-400 text-white">
+                    Instant Log
+                </button>
                 <button onclick="startAdvancedLog()"
-                    class="w-full md:w-auto h-16 bg-green-700 hover:bg-green-600 text-2xl font-bold rounded-lg shadow-lg px-6 py-3 focus:outline-none focus:ring-4 focus:ring-green-400 text-white">Advanced
-                    Log</button>
+                    class="w-full md:w-auto h-16 bg-green-700 hover:bg-green-600 text-2xl font-bold rounded-lg shadow-lg px-6 py-3 focus:outline-none focus:ring-4 focus:ring-green-400 text-white">
+                    Precision Log
+                </button>
                 <button onclick="startHistory()"
-                    class="w-full md:w-auto h-16 bg-purple-700 hover:bg-purple-600 text-2xl font-bold rounded-lg shadow-lg px-6 py-3 focus:outline-none focus:ring-4 focus:ring-purple-400 text-white">History</button>
+                    class="w-full md:w-auto h-16 bg-purple-700 hover:bg-purple-600 text-2xl font-bold rounded-lg shadow-lg px-6 py-3 focus:outline-none focus:ring-4 focus:ring-purple-400 text-white">
+                    History
+                </button>
             </div>
+            <p class="mb-2 text-xs text-gray-300">Please be sure to set your default medicine "cocktail" in the settings
+                before your first use.
+            </p>
         </div>
     </div>
     <!-- End Landing Page -->
@@ -218,12 +249,16 @@
             <button id="backHome"
                 class="absolute top-4 left-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded focus:outline-none"
                 onclick="goHome()">Home</button>
-            <!-- Settings Icon -->
+            <!-- Settings Icon (already on mainApp page) -->
             <button id="openSettings" class="absolute top-4 right-4 focus:outline-none" title="Settings">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-300 hover:text-blue-400" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M11.049 2.927c.3-.921 1.603-.921 1.902 0a1.724 1.724 0 002.573 1.066c.788-.57 1.87.163 1.54 1.043a1.724 1.724 0 001.066 2.573c.921.3.921 1.603 0 1.902a1.724 1.724 0 00-1.066 2.573c.33.88-.752 1.613-1.54 1.043a1.724 1.724 0 00-2.573 1.066c-.3.921-1.603.921-1.902 0a1.724 1.724 0 00-2.573-1.066c-.788.57-1.87-.163-1.54-1.043a1.724 1.724 0 00-1.066-2.573c-.921-.3-.921-1.603 0-1.902a1.724 1.724 0 001.066-2.573c-.33-.88.752-1.613 1.54-1.043.986.714 2.44.337 2.573-1.066z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0a1.724 1.724 0 002.573 1.066c.788-.57 1.87.163 
+                        1.54 1.043a1.724 1.724 0 001.066 2.573c.921.3.921 1.603 0 1.902a1.724 1.724 0 00-1.066 
+                        2.573c.33.88-.752 1.613-1.54 1.043a1.724 1.724 0 00-2.573 1.066c-.3.921-1.603.921-1.902 
+                        0a1.724 1.724 0 00-2.573-1.066c-.788.57-1.87-.163-1.54-1.043a1.724 1.724 0 00-1.066-2.573
+                        c-.921-.3-.921-1.603 0-1.902a1.724 1.724 0 001.066-2.573c-.33-.88.752-1.613 1.54-1.043.986.714 
+                        2.44.337 2.573-1.066z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
@@ -353,13 +388,20 @@
 
             <!-- History Tab -->
             <div id="historyTab" class="hidden tab-content flex flex-col gap-6">
+                <!-- Favorites Filter Button -->
+                <div class="flex justify-end mb-4">
+                    <button class="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded"
+                        onclick="toggleFavoriteFilter()">Filter Favorites: <span
+                            id="favoriteFilterStatus">Off</span></button>
+                </div>
                 <p class="font-semibold text-xl mb-2">Recent Logs</p>
                 <div id="logHistory" class="flex flex-col gap-3">
-                    <!-- Log entries will be appended here as cards -->
+                    <!-- Log entries will be rendered here -->
                 </div>
             </div>
         </div>
     </div>
+    <!-- End Main Application -->
 
     <!-- Photo Preview Modal -->
     <div id="photoModal" class="fixed inset-0 flex items-center justify-center hidden z-50">
@@ -371,7 +413,9 @@
         </div>
     </div>
 
-    <div id="settingsModal" class="fixed inset-0 flex items-center justify-center hidden z-50">
+    <!-- Settings Modal -->
+    <!-- Updated z-index here so the modal appears above the landing page (z-index > 1000) -->
+    <div id="settingsModal" class="fixed inset-0 flex items-center justify-center hidden" style="z-index: 2000;">
         <div class="absolute inset-0 modal-backdrop"></div>
         <div class="relative glass-card rounded-xl p-6 max-w-sm w-full">
             <h2 class="text-2xl font-bold mb-4 text-white">Default Settings</h2>
@@ -402,7 +446,7 @@
             <div class="flex justify-end gap-2">
                 <button class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-sm text-white"
                     onclick="closeSettings()">Cancel</button>
-                <button class="px-4 py-2 rounded-md bg-blue-700 hover:bg-blue-600 text-sm text-white font-semibold "
+                <button class="px-4 py-2 rounded-md bg-blue-700 hover:bg-blue-600 text-sm text-white font-semibold"
                     onclick="saveDefaultSettings()">Save</button>
             </div>
         </div>
@@ -465,6 +509,9 @@
         let wizardMedSelections = [];
         let wizardPhotoSelections = [];
 
+        // Global favorite filter flag
+        let favoriteFilter = false;
+
         // Helper function to activate a tab in the main app
         function activateTab(tabId) {
             document.querySelectorAll(".tab-btn").forEach(btn => {
@@ -476,6 +523,11 @@
             tabButton.classList.remove("inactive");
             document.querySelectorAll(".tab-content").forEach(tc => tc.classList.add("hidden"));
             document.getElementById(tabId).classList.remove("hidden");
+
+            // Reset the wizard to step one when Advanced tab is activated
+            if (tabId === "advancedTab" && document.getElementById("wizardStep1")) {
+                activateWizardStep(1);
+            }
         }
 
         // Landing page navigation functions
@@ -494,7 +546,8 @@
                 triggers: "Not set",
                 auraDescription: "Not set",
                 auraHeadache: "Not set",
-                photos: []
+                photos: [],
+                favorite: false
             };
             addLogEntry(logEntry);
             updateChart(0, false);
@@ -514,6 +567,7 @@
             document.getElementById('landingPage').classList.add('hidden');
             document.getElementById('mainApp').classList.add('visible');
             activateTab('historyTab');
+            renderHistory();
         }
 
         function goHome() {
@@ -521,7 +575,14 @@
             document.getElementById('landingPage').classList.remove('hidden');
         }
 
+        // Existing settings button on mainApp
         document.getElementById("openSettings").addEventListener("click", () => {
+            document.getElementById("settingsModal").classList.remove("hidden");
+        });
+
+        // New landing page settings button inside the header card
+        const landingSettingsBtn = document.getElementById("openSettingsLanding");
+        landingSettingsBtn.addEventListener("click", () => {
             document.getElementById("settingsModal").classList.remove("hidden");
         });
 
@@ -655,7 +716,8 @@
                 triggers: "Not set",
                 auraDescription: "Not set",
                 auraHeadache: "Not set",
-                photos: wizardPhotoSelections
+                photos: wizardPhotoSelections,
+                favorite: false
             };
             addLogEntry(logEntry);
             updateChart(0, false);
@@ -670,14 +732,13 @@
         }
         // --- End Advanced Log Wizard Functions ---
 
-        // --- History UI Functions ---
-        function addLogEntry(entry) {
-            logEntries.push(entry);
-            const logContainer = document.getElementById("logHistory");
-            const card = document.createElement("div");
+        // --- History UI Functions and Favorites ---
+        function createLogCard(entry) {
+            let card = document.createElement("div");
             card.className = "log-card";
             card.setAttribute("data-log-id", entry.id);
             card.style.setProperty("--log-border-color", entry.quick ? "#3B82F6" : "#10B981");
+
             let headerColor, typeText;
             if (entry.quick) {
                 headerColor = "bg-blue-700";
@@ -686,9 +747,18 @@
                 headerColor = "bg-green-700";
                 typeText = "Advanced Log";
             }
+
             let details = `
         <div class="log-card-header flex justify-between items-center mb-2">
-          <div class="text-lg font-bold">${entry.time}</div>
+          <div class="flex items-center">
+            <div class="text-lg font-bold">${entry.time}</div>
+            <button onclick="toggleFavorite(${entry.id})" class="ml-4 favorite-btn">
+              ${entry.favorite ?
+                    `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current text-yellow-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.447a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.37 2.447c-.784.57-1.84-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.642 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z"/></svg>` :
+                    `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 stroke-current text-yellow-400" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.447a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.37 2.447c-.784.57-1.84-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.642 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z"/></svg>`
+                }
+            </button>
+          </div>
           <div class="log-type ${headerColor} text-xs px-2 py-1 rounded">${typeText}</div>
         </div>
       `;
@@ -720,15 +790,65 @@
                 });
                 details += `</div>`;
             }
-            details += `<button class="edit-log-btn mt-2 px-2 py-1 bg-gray-500 hover:bg-gray-400 text-white rounded text-xs">Edit</button>`;
+            details += `<div class="mt-2 flex gap-2">
+                    <button class="edit-log-btn px-2 py-1 bg-gray-500 hover:bg-gray-400 text-white rounded text-xs" onclick="openEditLogModal(${entry.id})">Edit</button>
+                  </div>`;
             card.innerHTML = details;
-            card.querySelector(".edit-log-btn").addEventListener("click", (e) => {
-                e.stopPropagation();
-                openEditLogModal(entry.id);
-            });
-            logContainer.prepend(card);
+            return card;
         }
 
+        function renderHistory() {
+            const logContainer = document.getElementById("logHistory");
+            logContainer.innerHTML = "";
+            // Render in reverse order (most recent first)
+            for (let i = logEntries.length - 1; i >= 0; i--) {
+                const entry = logEntries[i];
+                if (!favoriteFilter || entry.favorite) {
+                    const card = createLogCard(entry);
+                    logContainer.appendChild(card);
+                }
+            }
+        }
+
+        function addLogEntry(entry) {
+            logEntries.push(entry);
+            renderHistory();
+        }
+
+        function updateLogCard(logEntry) {
+            renderHistory();
+        }
+
+        function toggleFavorite(logId) {
+            const entry = logEntries.find(e => e.id === logId);
+            if (entry) {
+                entry.favorite = !entry.favorite;
+                renderHistory();
+            }
+        }
+
+        function toggleFavoriteFilter() {
+            favoriteFilter = !favoriteFilter;
+            document.getElementById("favoriteFilterStatus").textContent = favoriteFilter ? "On" : "Off";
+            renderHistory();
+        }
+
+        // --- Placeholder Chart Function (no functionality here) ---
+        function updateChart(pain, auraFlag) {
+            // No functionality in this version.
+        }
+        updateChart(0, false);
+
+        // --- Photo Modal Functions ---
+        function openPhotoModal(url) {
+            document.getElementById("photoModalImg").src = url;
+            document.getElementById("photoModal").classList.remove("hidden");
+        }
+        function closePhotoModal() {
+            document.getElementById("photoModal").classList.add("hidden");
+        }
+
+        // --- Edit Log Modal Functions ---
         function openEditLogModal(logId) {
             currentEditingLogId = logId;
             const logEntry = logEntries.find(entry => entry.id === logId);
@@ -751,92 +871,14 @@
             const triggers = document.getElementById("triggersInput").value;
             const auraDescription = document.getElementById("auraDescriptionInput").value;
             const auraHeadache = document.getElementById("auraHeadacheInput").checked ? "Yes" : "No";
-            if (pain === "" || auraDuration === "" || triggers === "" || auraDescription === "") {
-                alert("Please fill in all fields before saving.");
-                return;
-            }
             const logEntry = logEntries.find(entry => entry.id === currentEditingLogId);
-            logEntry.pain = pain;
-            logEntry.auraDuration = auraDuration + " mins";
-            logEntry.triggers = triggers;
-            logEntry.auraDescription = auraDescription;
+            if (pain !== "") logEntry.pain = pain;
+            if (auraDuration !== "") logEntry.auraDuration = auraDuration + " mins";
+            if (triggers !== "") logEntry.triggers = triggers;
+            if (auraDescription !== "") logEntry.auraDescription = auraDescription;
             logEntry.auraHeadache = auraHeadache;
             updateLogCard(logEntry);
             closeEditLogModal();
-        }
-
-        function updateLogCard(logEntry) {
-            let card = document.querySelector(`.log-card[data-log-id="${logEntry.id}"]`);
-            if (card) {
-                card.style.setProperty("--log-border-color", logEntry.quick ? "#3B82F6" : "#10B981");
-                let headerColor, typeText;
-                if (logEntry.quick) {
-                    headerColor = "bg-blue-700";
-                    typeText = "Quick Log";
-                } else {
-                    headerColor = "bg-green-700";
-                    typeText = "Advanced Log";
-                }
-                let details = `
-          <div class="log-card-header flex justify-between items-center mb-2">
-            <div class="text-lg font-bold">${logEntry.time}</div>
-            <div class="log-type ${headerColor} text-xs px-2 py-1 rounded">${typeText}</div>
-          </div>
-        `;
-                if (logEntry.quick) {
-                    details += `<p>Default Meds: ${logEntry.meds}</p>`;
-                } else {
-                    details += `<p>Aura: ${logEntry.aura}</p>`;
-                    details += `<p>Meds: ${logEntry.meds}</p>`;
-                }
-                if (logEntry.pain && logEntry.pain !== "Not set") {
-                    details += `<p><strong>Pain:</strong> ${logEntry.pain}</p>`;
-                }
-                if (logEntry.auraDuration && logEntry.auraDuration !== "Not set") {
-                    details += `<p><strong>Aura Duration:</strong> ${logEntry.auraDuration}</p>`;
-                }
-                if (logEntry.triggers && logEntry.triggers !== "Not set") {
-                    details += `<p><strong>Triggers:</strong> ${logEntry.triggers}</p>`;
-                }
-                if (logEntry.auraDescription && logEntry.auraDescription !== "Not set") {
-                    details += `<p><strong>Aura Description:</strong> ${logEntry.auraDescription}</p>`;
-                }
-                if (logEntry.auraHeadache && logEntry.auraHeadache !== "Not set") {
-                    details += `<p><strong>Aura Followed by Headache:</strong> ${logEntry.auraHeadache}</p>`;
-                }
-                if (logEntry.photos && logEntry.photos.length > 0) {
-                    details += `<div class="mt-2 flex gap-2">`;
-                    logEntry.photos.forEach(photoUrl => {
-                        details += `<img src="${photoUrl}" alt="Aura Photo" class="w-16 h-16 object-cover rounded-md shadow cursor-pointer" onclick="openPhotoModal('${photoUrl}')">`;
-                    });
-                    details += `</div>`;
-                }
-                details += `<button class="edit-log-btn mt-2 px-2 py-1 bg-gray-500 hover:bg-gray-400 text-white rounded text-xs">Edit</button>`;
-                card.innerHTML = details;
-                card.querySelector(".edit-log-btn").addEventListener("click", (e) => {
-                    e.stopPropagation();
-                    openEditLogModal(logEntry.id);
-                });
-            }
-        }
-
-        function saveAdvancedLog() {
-            submitAdvancedLog();
-        }
-
-        // Placeholder Chart Function (does nothing in this version)
-        function updateChart(pain, auraFlag) {
-            // No functionality here.
-        }
-        updateChart(0, false);
-
-        // Photo modal functions
-        function openPhotoModal(url) {
-            document.getElementById("photoModalImg").src = url;
-            document.getElementById("photoModal").classList.remove("hidden");
-        }
-        function closePhotoModal() {
-            document.getElementById("photoModal").classList.add("hidden");
         }
     </script>
 
