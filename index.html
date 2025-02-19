@@ -343,27 +343,14 @@
             </div>
             <!-- End Advanced Tab (Wizard) -->
 
-            <!-- History Tab -->
+            <!-- History Tab (Charts removed) -->
             <div id="historyTab" class="hidden tab-content flex flex-col gap-6">
                 <p class="font-semibold text-xl mb-2">Recent Logs</p>
                 <div id="logHistory" class="flex flex-col gap-3">
                     <!-- Log entries will be appended here as cards -->
                 </div>
-                <div class="flex flex-col gap-4 mt-6">
-                    <div class="chart-container">
-                        <p class="mb-1">Pain Intensity (Last 7 Logs)</p>
-                        <div id="barChart" class="flex items-end h-16 gap-1">
-                            <!-- Bars appended dynamically -->
-                        </div>
-                    </div>
-                    <div class="chart-container">
-                        <p class="mb-1">Aura Timeline (Last 7 Logs)</p>
-                        <div id="auraTimeline" class="flex items-end h-16 gap-1">
-                            <!-- Aura markers appended dynamically -->
-                        </div>
-                    </div>
-                </div>
             </div>
+
             <!-- Analytics Tab -->
             <div id="analyticsTab" class="hidden tab-content flex flex-col gap-6">
                 <p class="mb-2 font-semibold text-xl">Analytics Dashboard</p>
@@ -418,7 +405,7 @@
         </div>
     </div>
 
-    <!-- Settings Modal (Default Medication UI updated) -->
+    <!-- Settings Modal (Default Medication UI updated for multi-select) -->
     <div id="settingsModal" class="fixed inset-0 flex items-center justify-center hidden z-50">
         <div class="absolute inset-0 modal-backdrop"></div>
         <div class="relative glass-card rounded-xl p-6 max-w-sm w-full">
@@ -430,6 +417,7 @@
             </div>
             <div class="mb-4">
                 <p class="mb-1">Default Medication</p>
+                <!-- Organized in a grid: 2 columns on small screens, 4 on medium -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-2" id="defaultMedPills">
                     <span class="pill" data-med="Ibuprofen">Ibuprofen</span>
                     <span class="pill" data-med="Acetaminophen">Acetaminophen</span>
@@ -495,9 +483,10 @@
         let nextLogId = 1;
         // Pre-configured defaults
         let defaultPain = 5;
-        let defaultMed = "None";
+        // Allow multiple default medications – stored as an array. If none selected, default to ["None"]
+        let defaultMed = ["None"];
         // For default medication selection in settings modal
-        let selectedDefaultMed = "";
+        let selectedDefaultMed = [];
         // Global variable for tracking the currently edited log (by id)
         let currentEditingLogId = null;
 
@@ -529,7 +518,8 @@
             const logEntry = {
                 id: nextLogId++,
                 time: timeString,
-                meds: defaultMed,
+                // Join defaultMed array into a string
+                meds: defaultMed.join(", "),
                 quick: true,
                 aura: "Aura logged.",
                 pain: "Not set",
@@ -582,7 +572,8 @@
         function saveDefaultSettings() {
             const painInput = document.getElementById("defaultPain").value;
             defaultPain = painInput ? painInput : 5;
-            defaultMed = selectedDefaultMed || defaultMed;
+            // Use the selectedDefaultMed array; if empty, default to ["None"]
+            defaultMed = selectedDefaultMed.length > 0 ? selectedDefaultMed : ["None"];
             document.getElementById("defaultPainValue").textContent = defaultPain;
             alert("Default settings saved!");
             closeSettings();
@@ -592,18 +583,18 @@
             document.getElementById("defaultPainValue").textContent = e.target.value;
         });
 
-        // Preselect "None" as default medication and attach single-selection behavior in settings modal
+        // Preselect default medications in settings modal (allow multi-select)
         document.addEventListener("DOMContentLoaded", function () {
             const defaultMedPills = document.querySelectorAll("#defaultMedPills .pill");
             defaultMedPills.forEach(pill => {
-                if (pill.dataset.med === "None") {
-                    pill.classList.add("selected");
-                    selectedDefaultMed = "None";
-                }
                 pill.addEventListener("click", () => {
-                    defaultMedPills.forEach(p => p.classList.remove("selected"));
-                    pill.classList.add("selected");
-                    selectedDefaultMed = pill.dataset.med;
+                    if (pill.classList.contains("selected")) {
+                        pill.classList.remove("selected");
+                        selectedDefaultMed = selectedDefaultMed.filter(m => m !== pill.dataset.med);
+                    } else {
+                        pill.classList.add("selected");
+                        selectedDefaultMed.push(pill.dataset.med);
+                    }
                 });
             });
         });
@@ -769,7 +760,6 @@
             if (entry.auraHeadache && entry.auraHeadache !== "Not set") {
                 details += `<p><strong>Aura Followed by Headache:</strong> ${entry.auraHeadache}</p>`;
             }
-            // Show photo thumbnails if photos exist
             if (entry.photos && entry.photos.length > 0) {
                 details += `<div class="mt-2 flex gap-2">`;
                 entry.photos.forEach(photoUrl => {
@@ -918,7 +908,7 @@
             document.getElementById("detailedReport").innerHTML = reportHTML;
         }
 
-        // Define updateChart in the global scope so it is available to all functions.
+        // Define updateChart in the global scope
         let lastSevenLogs = [];
         let lastAuraFlags = [];
         function updateChart(pain, auraFlag) {
@@ -927,23 +917,27 @@
             lastAuraFlags.unshift(auraFlag);
             if (lastAuraFlags.length > 7) lastAuraFlags.pop();
             const barChart = document.getElementById("barChart");
-            barChart.innerHTML = "";
-            lastSevenLogs.forEach(val => {
-                const barEl = document.createElement("div");
-                barEl.className = "w-8 bg-blue-500 rounded-t transition-all duration-300";
-                const percent = (val / 10) * 100;
-                barEl.style.height = percent + "%";
-                barChart.appendChild(barEl);
-            });
+            if (barChart) {
+                barChart.innerHTML = "";
+                lastSevenLogs.forEach(val => {
+                    const barEl = document.createElement("div");
+                    barEl.className = "w-8 bg-blue-500 rounded-t transition-all duration-300";
+                    const percent = (val / 10) * 100;
+                    barEl.style.height = percent + "%";
+                    barChart.appendChild(barEl);
+                });
+            }
             const auraTimeline = document.getElementById("auraTimeline");
-            auraTimeline.innerHTML = "";
-            lastAuraFlags.forEach(flag => {
-                const marker = document.createElement("div");
-                marker.className = "w-8 rounded-t transition-all duration-300";
-                marker.style.backgroundColor = flag ? "#3B82F6" : "#6B7280";
-                marker.style.height = "100%";
-                auraTimeline.appendChild(marker);
-            });
+            if (auraTimeline) {
+                auraTimeline.innerHTML = "";
+                lastAuraFlags.forEach(flag => {
+                    const marker = document.createElement("div");
+                    marker.className = "w-8 rounded-t transition-all duration-300";
+                    marker.style.backgroundColor = flag ? "#3B82F6" : "#6B7280";
+                    marker.style.height = "100%";
+                    auraTimeline.appendChild(marker);
+                });
+            }
         }
         updateChart(0, false);
 
