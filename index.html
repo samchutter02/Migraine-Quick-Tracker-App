@@ -64,7 +64,7 @@
             border-color: transparent;
         }
 
-        /* Wizard-specific: enlarge aura and medication buttons to ensure ample padding */
+        /* Wizard-specific: enlarge aura and medication buttons */
         #auraPillsWizard .pill,
         #medPillsWizard .pill {
             width: 100px;
@@ -73,7 +73,7 @@
             padding: 0.5rem;
         }
 
-        /* New Photo Selection styling */
+        /* Photo Selection styling */
         .photo-select {
             width: 100px;
             height: 100px;
@@ -96,7 +96,7 @@
             object-fit: cover;
         }
 
-        /* Updated History Log Card Styling for Visual Distinctiveness */
+        /* Updated History Log Card Styling */
         .log-card {
             background: rgba(255, 255, 255, 0.15);
             padding: 1rem;
@@ -118,7 +118,6 @@
             margin-bottom: 0.25rem;
         }
 
-        /* Make history images larger and add a subtle shadow */
         .log-card img {
             width: 4rem;
             height: 4rem;
@@ -205,9 +204,6 @@
                 <button
                     class="w-full h-16 bg-purple-700 hover:bg-purple-600 text-2xl font-bold rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-400 text-white"
                     onclick="startHistory()">History</button>
-                <button
-                    class="w-full h-16 bg-indigo-700 hover:bg-indigo-600 text-2xl font-bold rounded-lg shadow-lg focus:outline-none focus:ring-4 focus:ring-indigo-400 text-white"
-                    onclick="startAnalytics()">Analytics</button>
             </div>
             <p class="mt-8 text-center text-white text-xl">Select your desired logging mode or view your data.</p>
         </div>
@@ -231,14 +227,12 @@
                 </svg>
             </button>
             <h1 class="text-3xl font-extrabold text-center mb-4 mt-10">Migraine Logger v2.6</h1>
-            <!-- Tabs Navigation -->
+            <!-- Tabs Navigation (Analytics tab removed) -->
             <div class="flex justify-center gap-4 mb-6 border-b border-white/20">
                 <button class="tab-btn active" data-target="advancedTab"
                     onclick="activateTab('advancedTab')">Advanced</button>
                 <button class="tab-btn inactive" data-target="historyTab"
                     onclick="activateTab('historyTab')">History</button>
-                <button class="tab-btn inactive" data-target="analyticsTab"
-                    onclick="activateTab('analyticsTab')">Analytics</button>
             </div>
 
             <!-- Advanced Tab Content: Step-by-Step Wizard with Photo Selection -->
@@ -343,53 +337,11 @@
             </div>
             <!-- End Advanced Tab (Wizard) -->
 
-            <!-- History Tab (Charts removed) -->
+            <!-- History Tab -->
             <div id="historyTab" class="hidden tab-content flex flex-col gap-6">
                 <p class="font-semibold text-xl mb-2">Recent Logs</p>
                 <div id="logHistory" class="flex flex-col gap-3">
                     <!-- Log entries will be appended here as cards -->
-                </div>
-            </div>
-
-            <!-- Analytics Tab -->
-            <div id="analyticsTab" class="hidden tab-content flex flex-col gap-6">
-                <p class="mb-2 font-semibold text-xl">Analytics Dashboard</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="p-4 bg-blue-700 rounded shadow">
-                        <p class="text-2xl font-bold">Total Logs</p>
-                        <p id="totalLogs" class="text-xl">0</p>
-                    </div>
-                    <div class="p-4 bg-green-700 rounded shadow">
-                        <p class="text-2xl font-bold">Quick Logs</p>
-                        <p id="quickLogs" class="text-xl">0</p>
-                    </div>
-                    <div class="p-4 bg-purple-700 rounded shadow">
-                        <p class="text-2xl font-bold">Advanced Logs</p>
-                        <p id="advancedLogs" class="text-xl">0</p>
-                    </div>
-                    <div class="p-4 bg-indigo-700 rounded shadow">
-                        <p class="text-2xl font-bold">Aura Events</p>
-                        <p id="auraEvents" class="text-xl">0</p>
-                    </div>
-                    <div class="p-4 bg-red-700 rounded shadow">
-                        <p class="text-2xl font-bold">Avg Pain (Adv)</p>
-                        <p id="avgPain" class="text-xl">N/A</p>
-                    </div>
-                </div>
-                <div class="mt-6">
-                    <h2 class="text-2xl font-bold mb-4">Advanced Analytics</h2>
-                    <ul class="list-disc ml-6 space-y-2 text-lg">
-                        <li><strong>Correlation Matrix:</strong> Analyze data from aura logs, sleep patterns, weather,
-                            stress, and dietary inputs to reveal your strongest migraine triggers.</li>
-                        <li><strong>Medication Efficacy Dashboard:</strong> Track medications taken alongside migraine
-                            severity and duration. View trends and average pain reduction per treatment.</li>
-                        <li><strong>Shareable Reports:</strong> Generate detailed reports that focus on
-                            migraine-specific factors (aura, medication response, common incident times, etc.) for
-                            discussion with your healthcare provider.</li>
-                    </ul>
-                    <button class="mt-6 px-4 py-2 rounded bg-green-600 hover:bg-green-500 text-white text-lg"
-                        onclick="generateReport()">Generate Detailed Report</button>
-                    <div id="detailedReport" class="mt-6 p-4 bg-white/10 rounded"></div>
                 </div>
             </div>
         </div>
@@ -409,16 +361,15 @@
     <div id="settingsModal" class="fixed inset-0 flex items-center justify-center hidden z-50">
         <div class="absolute inset-0 modal-backdrop"></div>
         <div class="relative glass-card rounded-xl p-6 max-w-sm w-full">
-            <h2 class="text-2xl font-bold mb-4">Default Settings</h2>
+            <h2 class="text-2xl font-bold mb-4 text-white">Default Settings</h2>
             <div class="mb-4">
-                <label for="defaultPain" class="block mb-1">Default Pain Intensity (1-10)</label>
+                <label for="defaultPain" class="block mb- text-white">Default Pain Intensity (1-10)</label>
                 <input id="defaultPain" type="range" min="1" max="10" value="5" class="w-full">
-                <p id="defaultPainValue" class="text-center mt-1">5</p>
+                <p id="defaultPainValue" class="text-center mt-1 text-white">5</p>
             </div>
             <div class="mb-4">
-                <p class="mb-1">Default Medication</p>
-                <!-- Organized in a grid: 2 columns on small screens, 4 on medium -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-2" id="defaultMedPills">
+                <p class="mb-1 text-white">Default Medication</p>
+                <div class="grid grid-cols-2 md:grid-cols-2 gap-1 md:gap-2" id="defaultMedPills">
                     <span class="pill" data-med="Ibuprofen">Ibuprofen</span>
                     <span class="pill" data-med="Acetaminophen">Acetaminophen</span>
                     <span class="pill" data-med="Aspirin">Aspirin</span>
@@ -430,9 +381,9 @@
                 </div>
             </div>
             <div class="flex justify-end gap-2">
-                <button class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-sm"
+                <button class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-sm text-white"
                     onclick="closeSettings()">Cancel</button>
-                <button class="px-4 py-2 rounded-md bg-blue-700 hover:bg-blue-600 text-sm font-semibold"
+                <button class="px-4 py-2 rounded-md bg-blue-700 hover:bg-blue-600 text-sm text-white font-semibold "
                     onclick="saveDefaultSettings()">Save</button>
             </div>
         </div>
@@ -506,19 +457,16 @@
             tabButton.classList.remove("inactive");
             document.querySelectorAll(".tab-content").forEach(tc => tc.classList.add("hidden"));
             document.getElementById(tabId).classList.remove("hidden");
-            if (tabId === "analyticsTab") {
-                updateAnalyticsDashboard();
-            }
         }
 
         // Landing page navigation functions
         function logQuickEpisode() {
             const now = new Date();
-            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            // Use full date and time for quick log
+            const dt = now.toLocaleString();
             const logEntry = {
                 id: nextLogId++,
-                time: timeString,
-                // Join defaultMed array into a string
+                time: dt,
                 meds: defaultMed.join(", "),
                 quick: true,
                 aura: "Aura logged.",
@@ -547,12 +495,6 @@
             document.getElementById('landingPage').classList.add('hidden');
             document.getElementById('mainApp').classList.add('visible');
             activateTab('historyTab');
-        }
-
-        function startAnalytics() {
-            document.getElementById('landingPage').classList.add('hidden');
-            document.getElementById('mainApp').classList.add('visible');
-            activateTab('analyticsTab');
         }
 
         // Back to Home function for main app
@@ -871,6 +813,13 @@
             submitAdvancedLog();
         }
 
+        // --- Chart Functions (placeholder) ---
+        function updateChart(pain, auraFlag) {
+            // Placeholder function – functionality remains unchanged
+        }
+        updateChart(0, false);
+
+        // --- Analytics Dashboard Report (unused since analytics page is removed) ---
         function updateAnalyticsDashboard() {
             let totalLogs = logEntries.length;
             let quickCount = logEntries.filter(log => log.quick).length;
@@ -878,11 +827,7 @@
             let auraCount = logEntries.filter(log => log.aura && log.aura.trim() !== "").length;
             let advancedLogsWithPain = logEntries.filter(log => !log.quick && log.pain && log.pain !== "Not set").map(log => parseInt(log.pain, 10));
             let avgPain = advancedLogsWithPain.length ? (advancedLogsWithPain.reduce((a, b) => a + b, 0) / advancedLogsWithPain.length).toFixed(2) : "N/A";
-            document.getElementById("totalLogs").textContent = totalLogs;
-            document.getElementById("quickLogs").textContent = quickCount;
-            document.getElementById("advancedLogs").textContent = advancedCount;
-            document.getElementById("auraEvents").textContent = auraCount;
-            document.getElementById("avgPain").textContent = avgPain;
+            // This function is no longer used as the analytics page is scrapped.
         }
 
         function generateReport() {
@@ -908,44 +853,12 @@
             document.getElementById("detailedReport").innerHTML = reportHTML;
         }
 
-        // Define updateChart in the global scope
-        let lastSevenLogs = [];
-        let lastAuraFlags = [];
-        function updateChart(pain, auraFlag) {
-            lastSevenLogs.unshift(parseInt(pain, 10));
-            if (lastSevenLogs.length > 7) lastSevenLogs.pop();
-            lastAuraFlags.unshift(auraFlag);
-            if (lastAuraFlags.length > 7) lastAuraFlags.pop();
-            const barChart = document.getElementById("barChart");
-            if (barChart) {
-                barChart.innerHTML = "";
-                lastSevenLogs.forEach(val => {
-                    const barEl = document.createElement("div");
-                    barEl.className = "w-8 bg-blue-500 rounded-t transition-all duration-300";
-                    const percent = (val / 10) * 100;
-                    barEl.style.height = percent + "%";
-                    barChart.appendChild(barEl);
-                });
-            }
-            const auraTimeline = document.getElementById("auraTimeline");
-            if (auraTimeline) {
-                auraTimeline.innerHTML = "";
-                lastAuraFlags.forEach(flag => {
-                    const marker = document.createElement("div");
-                    marker.className = "w-8 rounded-t transition-all duration-300";
-                    marker.style.backgroundColor = flag ? "#3B82F6" : "#6B7280";
-                    marker.style.height = "100%";
-                    auraTimeline.appendChild(marker);
-                });
-            }
-        }
-        updateChart(0, false);
-
-        // Photo modal functions for expanding preview
+        // --- Photo modal functions ---
         function openPhotoModal(url) {
             document.getElementById("photoModalImg").src = url;
             document.getElementById("photoModal").classList.remove("hidden");
         }
+
         function closePhotoModal() {
             document.getElementById("photoModal").classList.add("hidden");
         }
