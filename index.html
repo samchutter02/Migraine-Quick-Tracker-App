@@ -44,7 +44,6 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            justify-self: center;
             padding: 0.5rem 1rem;
             margin: 0.1rem;
             border-radius: 10px;
@@ -167,6 +166,43 @@
             background: rgba(0, 0, 0, 0.6);
         }
 
+        /* Toast Notification Styles */
+        #toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 2100;
+        }
+
+        .toast {
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 0.75rem 1.25rem;
+            margin-top: 0.5rem;
+            border-radius: 0.5rem;
+            opacity: 0;
+            transform: translateY(-10px);
+            animation: fadeInOut 3s forwards;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            10%,
+            90% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+
         /* Ensure full-screen blurred background on main app pages */
         #mainApp::before {
             content: "";
@@ -205,12 +241,15 @@
 </head>
 
 <body class="min-h-screen">
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
+
     <!-- Redesigned Landing Page -->
-    <div id="landingPage" class="min-h-screen flex items-center justify-center p-4">
-        <!-- Header Card containing the title, buttons, etc. -->
+    <div id="landingPage" class="min-h-screen flex flex-col items-center justify-center p-4 space-y-6">
+        <!-- Main Card with title and primary buttons -->
         <div class="bg-black bg-opacity-60 p-8 rounded-xl shadow-2xl max-w-3xl w-full text-center relative">
-            <!-- New Settings Icon inside the header card (no label underneath) -->
-            <button id="openSettingsLanding" class="absolute top-4 right-4 focus:outline-none" title="Settings">
+            <!-- Settings Icon inside the main card -->
+            <button id="openSettingsLanding" class="absolute top-2 right-2 focus:outline-none" title="Settings">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-300 hover:text-blue-400" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -220,8 +259,8 @@
                 </svg>
             </button>
             <h1 class="text-5xl font-extrabold text-white mb-4">QuickTrack Migraine Logger</h1>
-            <p class="text-2xl text-gray-200 mb-4">Track your migraine episodes with a single tap.</p>
-            <div class="flex flex-col md:flex-row justify-center items-center gap-4 mb-4">
+            <p class="text-xl text-gray-200 mb-6">Log your migraine episodes effortlessly.</p>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-4">
                 <button onclick="logQuickEpisode()"
                     class="w-full md:w-auto h-16 bg-blue-700 hover:bg-blue-600 text-2xl font-bold rounded-lg shadow-lg px-6 py-3 focus:outline-none focus:ring-4 focus:ring-blue-400 text-white">
                     Instant Log
@@ -235,8 +274,25 @@
                     History
                 </button>
             </div>
-            <p class="mb-2 text-xs text-gray-300">Please be sure to set your default medicine "cocktail" in the settings
-                before your first use.
+        </div>
+        <!-- Separate Description Card -->
+        <div class="bg-black bg-opacity-60 p-6 rounded-xl shadow-2xl max-w-3xl w-full text-left">
+            <h2 class="text-2xl font-bold text-white mb-2">How It Works</h2>
+            <p class="text-gray-300 mb-2">
+                <span class="font-semibold">Instant Log:</span> Instantly record an episode using your pre-set default
+                medications with ONE tap.
+            </p>
+            <p class="text-gray-300 mb-2">
+                <span class="font-semibold">Precision Log:</span> Provide detailed information including aura types,
+                medications, and visual cues.
+            </p>
+            <p class="text-gray-300">
+                <span class="font-semibold">History:</span> Fill in information about the epidsode once it's over.
+            </p>
+            <p class="mt-4 text-sm text-gray-400">
+                <span class="font-bold text-red-500">Important:</span> Before your first use, please set your default
+                medicine
+                "cocktail" using the settings icon in the top right.
             </p>
         </div>
     </div>
@@ -254,9 +310,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-300 hover:text-blue-400" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0a1.724 1.724 0 002.573 1.066c.788-.57 1.87.163 
-                        1.54 1.043a1.724 1.724 0 001.066 2.573c.921.3.921 1.603 0 1.902a1.724 1.724 0 00-1.066 
-                        2.573c.33.88-.752 1.613-1.54 1.043a1.724 1.724 0 00-2.573 1.066c-.3.921-1.603.921-1.902 
-                        0a1.724 1.724 0 00-2.573-1.066c-.788.57-1.87-.163-1.54-1.043a1.724 1.724 0 00-1.066-2.573
+                        1.54 1.043a1.724 1.724 0 001.066 2.573c.921.3.921 1.603 0 1.902a1.724 1.724 0 00-1.066 2.573c.33.88-.752 1.613-1.54 1.043a1.724 1.724 0 00-2.573 1.066c-.3.921-1.603.921-1.902 0a1.724 1.724 0 00-2.573-1.066c-.788.57-1.87-.163-1.54-1.043a1.724 1.724 0 00-1.066-2.573
                         c-.921-.3-.921-1.603 0-1.902a1.724 1.724 0 001.066-2.573c-.33-.88.752-1.613 1.54-1.043.986.714 
                         2.44.337 2.573-1.066z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -271,7 +325,6 @@
                 <button class="tab-btn inactive" data-target="historyTab"
                     onclick="activateTab('historyTab')">History</button>
             </div>
-
             <!-- Advanced Tab Content: Step-by-Step Wizard with Photo Selection -->
             <div id="advancedTab" class="tab-content">
                 <div id="advancedWizardTemplate">
@@ -414,7 +467,6 @@
     </div>
 
     <!-- Settings Modal -->
-    <!-- Updated z-index here so the modal appears above the landing page (z-index > 1000) -->
     <div id="settingsModal" class="fixed inset-0 flex items-center justify-center hidden" style="z-index: 2000;">
         <div class="absolute inset-0 modal-backdrop"></div>
         <div class="relative glass-card rounded-xl p-6 max-w-sm w-full">
@@ -491,6 +543,19 @@
     </div>
 
     <script>
+        // Toast Notification Function
+        function showToast(message) {
+            const container = document.getElementById("toast-container");
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            toast.innerText = message;
+            container.appendChild(toast);
+            // Remove the toast after 3 seconds (matches animation duration)
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
         // Global log storage for analytics
         let logEntries = [];
         // Global variable for assigning unique log IDs
@@ -551,7 +616,7 @@
             };
             addLogEntry(logEntry);
             updateChart(0, false);
-            alert("Quick aura log saved using your default meds!");
+            showToast("Quick aura log saved using your default meds!");
         }
 
         function startAdvancedLog() {
@@ -580,7 +645,7 @@
             document.getElementById("settingsModal").classList.remove("hidden");
         });
 
-        // New landing page settings button inside the header card
+        // New landing page settings button inside the main card
         const landingSettingsBtn = document.getElementById("openSettingsLanding");
         landingSettingsBtn.addEventListener("click", () => {
             document.getElementById("settingsModal").classList.remove("hidden");
@@ -595,7 +660,7 @@
             defaultPain = painInput ? painInput : 5;
             defaultMed = selectedDefaultMed.length > 0 ? selectedDefaultMed : ["None"];
             document.getElementById("defaultPainValue").textContent = defaultPain;
-            alert("Default settings saved!");
+            showToast("Default settings saved!");
             closeSettings();
         }
 
@@ -721,7 +786,7 @@
             };
             addLogEntry(logEntry);
             updateChart(0, false);
-            alert("Advanced migraine log saved!");
+            showToast("Advanced migraine log saved!");
             wizardAuraSelections = [];
             wizardMedSelections = [];
             wizardPhotoSelections = [];
