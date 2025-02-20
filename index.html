@@ -4,21 +4,21 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index</title>
+    <title>QuickTrack Migraine Logger</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Static dark, migraine-friendly blue-gray gradient background for main pages */
+        /* Background and typography */
         body {
             background: linear-gradient(120deg, #0d1b2a, #1b263b, #415a77, #778da9);
             font-family: 'Inter', sans-serif;
         }
 
-        /* Landing page gets its own background image */
+        /* Landing page background image */
         #landingPage {
             background: url('img/bg3.jpg') center/cover no-repeat;
         }
 
-        /* Frosty glass-card style */
+        /* Glass card styling */
         .glass-card {
             background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(16px);
@@ -26,20 +26,7 @@
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        /* Tab button styling */
-        .tab-btn {
-            @apply inline-block px-4 py-2 border-b-2 font-medium text-sm cursor-pointer;
-        }
-
-        .tab-btn.active {
-            @apply border-blue-400 text-blue-300;
-        }
-
-        .tab-btn.inactive {
-            @apply border-transparent hover:text-blue-300;
-        }
-
-        /* Pill styling – used for aura, medication, and default medication options */
+        /* Pill styling */
         .pill {
             display: inline-flex;
             align-items: center;
@@ -67,7 +54,7 @@
             border-color: transparent;
         }
 
-        /* Wizard-specific: enlarge aura and medication buttons */
+        /* Wizard button sizing */
         #auraPillsWizard .pill,
         #medPillsWizard .pill {
             width: 100px;
@@ -87,83 +74,22 @@
             border: 2px solid transparent;
             border-radius: 10px;
             overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .photo-select:hover {
+            transform: scale(1.05);
         }
 
         .photo-select.selected {
-            border-color: #3B82F6;
+            border: 3px solid #3B82F6;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
         }
 
         .photo-select img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
-
-        /* Updated History Log Card Styling */
-        .log-card {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 1rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            border-left: 6px solid var(--log-border-color, #3B82F6);
-            margin-bottom: 1rem;
-        }
-
-        .log-card-header {
-            @apply flex justify-between items-center mb-2;
-        }
-
-        .log-type {
-            @apply text-xs px-2 py-1 rounded;
-        }
-
-        .log-details div {
-            margin-bottom: 0.25rem;
-        }
-
-        .log-card img {
-            width: 4rem;
-            height: 4rem;
-            object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
-            cursor: pointer;
-        }
-
-        /* Chart container styling */
-        .chart-container {
-            @apply bg-white/10 p-4 rounded-md;
-        }
-
-        /* Custom range slider styling */
-        input[type="range"] {
-            -webkit-appearance: none;
-            width: 100%;
-            height: 6px;
-            border-radius: 5px;
-            background: #415a77;
-            outline: none;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #778da9;
-            cursor: pointer;
-        }
-
-        input[type="range"]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #778da9;
-            cursor: pointer;
-        }
-
-        .modal-backdrop {
-            background: rgba(0, 0, 0, 0.6);
         }
 
         /* Toast Notification Styles */
@@ -182,6 +108,7 @@
             border-radius: 0.5rem;
             opacity: 0;
             transform: translateY(-10px);
+            text-align: center;
             animation: fadeInOut 3s forwards;
         }
 
@@ -203,20 +130,7 @@
             }
         }
 
-        /* Ensure full-screen blurred background on main app pages */
-        #mainApp::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: inherit;
-            filter: blur(8px);
-            z-index: -1;
-        }
-
-        /* Landing page and Main app states */
+        /* Landing page layout */
         #landingPage {
             position: fixed;
             inset: 0;
@@ -229,6 +143,7 @@
             pointer-events: none;
         }
 
+        /* Main app state */
         #mainApp {
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
@@ -236,6 +151,29 @@
 
         #mainApp.visible {
             opacity: 1;
+        }
+
+        /* Blur effect for mainApp background */
+        #mainApp::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        /* Process overview card hover effect */
+        .process-card {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .process-card:hover {
+            transform: scale(1.02);
         }
     </style>
 </head>
@@ -245,11 +183,11 @@
     <div id="toast-container"></div>
 
     <!-- Redesigned Landing Page -->
-    <div id="landingPage" class="min-h-screen flex flex-col items-center justify-center p-4 space-y-6">
-        <!-- Main Card with title and primary buttons -->
-        <div class="bg-black bg-opacity-60 p-8 rounded-xl shadow-2xl max-w-3xl w-full text-center relative">
-            <!-- Settings Icon inside the main card -->
-            <button id="openSettingsLanding" class="absolute top-2 right-2 focus:outline-none" title="Settings">
+    <div id="landingPage" class="min-h-screen flex flex-col items-center justify-center p-4 space-y-10">
+        <!-- Instant Log Section -->
+        <div class="bg-black bg-opacity-70 p-10 rounded-xl shadow-2xl max-w-3xl w-full text-center relative">
+            <!-- Settings Icon -->
+            <button id="openSettingsLanding" class="absolute top-4 right-4 focus:outline-none" title="Settings">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-300 hover:text-blue-400" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -258,42 +196,40 @@
                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
             </button>
-            <h1 class="text-5xl font-extrabold text-white mb-4">QuickTrack Migraine Logger</h1>
-            <p class="text-xl text-gray-200 mb-6">Log your migraine episodes effortlessly.</p>
-            <div class="flex flex-col md:flex-row justify-center items-center gap-4">
-                <button onclick="logQuickEpisode()"
-                    class="w-full md:w-auto h-16 bg-blue-700 hover:bg-blue-600 text-2xl font-bold rounded-lg shadow-lg px-6 py-3 focus:outline-none focus:ring-4 focus:ring-blue-400 text-white">
-                    Instant Log
-                </button>
-                <button onclick="startAdvancedLog()"
-                    class="w-full md:w-auto h-16 bg-green-700 hover:bg-green-600 text-2xl font-bold rounded-lg shadow-lg px-6 py-3 focus:outline-none focus:ring-4 focus:ring-green-400 text-white">
-                    Precision Log
-                </button>
-                <button onclick="startHistory()"
-                    class="w-full md:w-auto h-16 bg-purple-700 hover:bg-purple-600 text-2xl font-bold rounded-lg shadow-lg px-6 py-3 focus:outline-none focus:ring-4 focus:ring-purple-400 text-white">
-                    History
-                </button>
-            </div>
+            <h1 class="text-5xl font-extrabold text-white mb-4">Instant Log</h1>
+            <p class="text-xl text-gray-200 mb-8">One click records the current date & time. Edit details later.</p>
+            <button onclick="logQuickEpisode()"
+                class="w-full md:w-auto h-20 bg-blue-800 hover:bg-blue-700 text-3xl font-bold rounded-lg shadow-xl px-8 py-4 focus:outline-none focus:ring-4 focus:ring-blue-400 text-white">
+                Instant Log
+            </button>
         </div>
-        <!-- Separate Description Card -->
-        <div class="bg-black bg-opacity-60 p-6 rounded-xl shadow-2xl max-w-3xl w-full text-left">
-            <h2 class="text-2xl font-bold text-white mb-2">How It Works</h2>
-            <p class="text-gray-300 mb-2">
-                <span class="font-semibold">Instant Log:</span> Instantly record an episode using your pre-set default
-                medications with ONE tap.
-            </p>
-            <p class="text-gray-300 mb-2">
-                <span class="font-semibold">Precision Log:</span> Provide detailed information including aura types,
-                medications, and visual cues.
-            </p>
-            <p class="text-gray-300">
-                <span class="font-semibold">History:</span> Fill in information about the epidsode once it's over.
-            </p>
-            <p class="mt-4 text-sm text-gray-400">
-                <span class="font-bold text-red-500">Important:</span> Before your first use, please set your default
-                medicine
-                "cocktail" using the settings icon in the top right.
-            </p>
+        <!-- Process Overview Section -->
+        <div class="bg-black bg-opacity-70 p-8 rounded-xl shadow-2xl max-w-3xl w-full">
+            <h2 class="text-3xl font-bold text-white mb-6">How It Works</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Precision Log Explanation (clickable) -->
+                <div onclick="startAdvancedLog()" class="process-card bg-green-900 p-4 rounded-lg hover:bg-green-800">
+                    <h3 class="text-xl font-semibold text-white mb-2">Precision Log</h3>
+                    <p class="text-sm text-gray-300">
+                        Log detailed information including aura types, medications, and more for comprehensive records.
+                    </p>
+                </div>
+                <!-- History Explanation (clickable) -->
+                <div onclick="startHistory()" class="process-card bg-purple-900 p-4 rounded-lg hover:bg-purple-800">
+                    <h3 class="text-xl font-semibold text-white mb-2">History</h3>
+                    <p class="text-sm text-gray-300">
+                        View and filter past logs to track patterns and triggers over time.
+                    </p>
+                </div>
+                <!-- Default Meds Explanation (clickable) -->
+                <div onclick="document.getElementById('settingsModal').classList.remove('hidden')"
+                    class="process-card bg-blue-900 p-4 rounded-lg hover:bg-blue-800">
+                    <h3 class="text-xl font-semibold text-white mb-2">Default Meds</h3>
+                    <p class="text-sm text-gray-300">
+                        Set your default medicine cocktail in Settings for a faster Instant Log experience.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
     <!-- End Landing Page -->
@@ -305,27 +241,25 @@
             <button id="backHome"
                 class="absolute top-4 left-4 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded focus:outline-none"
                 onclick="goHome()">Home</button>
-            <!-- Settings Icon (already on mainApp page) -->
+            <!-- Settings Icon -->
             <button id="openSettings" class="absolute top-4 right-4 focus:outline-none" title="Settings">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-300 hover:text-blue-400" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0a1.724 1.724 0 002.573 1.066c.788-.57 1.87.163 
-                        1.54 1.043a1.724 1.724 0 001.066 2.573c.921.3.921 1.603 0 1.902a1.724 1.724 0 00-1.066 2.573c.33.88-.752 1.613-1.54 1.043a1.724 1.724 0 00-2.573 1.066c-.3.921-1.603.921-1.902 0a1.724 1.724 0 00-2.573-1.066c-.788.57-1.87-.163-1.54-1.043a1.724 1.724 0 00-1.066-2.573
-                        c-.921-.3-.921-1.603 0-1.902a1.724 1.724 0 001.066-2.573c-.33-.88.752-1.613 1.54-1.043.986.714 
-                        2.44.337 2.573-1.066z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11.049 2.927c.3-.921 1.603-.921 1.902 0a1.724 1.724 0 002.573 1.066c.788-.57 1.87.163 1.54 1.043a1.724 1.724 0 001.066 2.573c.921.3.921 1.603 0 1.902a1.724 1.724 0 00-1.066 2.573c.33.88-.752 1.613-1.54 1.043a1.724 1.724 0 00-2.573 1.066c-.3.921-1.603.921-1.902 0a1.724 1.724 0 00-2.573-1.066c-.788.57-1.87-.163-1.54-1.043a1.724 1.724 0 00-1.066-2.573c-.921-.3-.921-1.603 0-1.902a1.724 1.724 0 001.066-2.573c-.33-.88.752-1.613 1.54-1.043.986.714 2.44.337 2.573-1.066z" />
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
             </button>
             <h1 class="text-3xl font-extrabold text-center mb-4 mt-10">Migraine Logger v2.6</h1>
-            <!-- Tabs Navigation (Analytics removed) -->
+            <!-- Tabs Navigation -->
             <div class="flex justify-center gap-4 mb-6 border-b border-white/20">
                 <button class="tab-btn active" data-target="advancedTab"
                     onclick="activateTab('advancedTab')">Advanced</button>
                 <button class="tab-btn inactive" data-target="historyTab"
                     onclick="activateTab('historyTab')">History</button>
             </div>
-            <!-- Advanced Tab Content: Step-by-Step Wizard with Photo Selection -->
+            <!-- Advanced Log Wizard -->
             <div id="advancedTab" class="tab-content">
                 <div id="advancedWizardTemplate">
                     <!-- Wizard Step 1: Date/Time & Aura Selection -->
@@ -337,7 +271,6 @@
                                 class="w-full p-3 rounded-md bg-white/20 border-none outline-none" />
                         </div>
                         <p class="mb-4 text-lg text-gray-300">Please select the aura type(s) you experienced:</p>
-                        <!-- Grid of square aura buttons -->
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="auraPillsWizard">
                             <button type="button" class="pill" data-aura="Flashing Lights">Flashing Lights</button>
                             <button type="button" class="pill" data-aura="Zigzag Patterns">Zigzag Patterns</button>
@@ -357,7 +290,7 @@
                         </div>
                         <div class="mt-6">
                             <button id="wizardNextStep"
-                                class="px-6 py-3 w-full rounded-md bg-green-600 hover:bg-green-500 text-lg font-semibold"
+                                class="px-6 py-3 w-full rounded-md bg-green-800 hover:bg-green-700 text-lg font-semibold"
                                 onclick="goToWizardStep2()">Next</button>
                         </div>
                     </div>
@@ -365,7 +298,6 @@
                     <div id="wizardStep2" class="wizard-step hidden">
                         <h2 class="text-2xl font-bold mb-4">Step 2: Select Medications</h2>
                         <p class="mb-4 text-lg text-gray-300">Please select the medication(s) you took:</p>
-                        <!-- Grid of square medication buttons -->
                         <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="medPillsWizard">
                             <button type="button" class="pill" data-med="Ibuprofen">Ibuprofen</button>
                             <button type="button" class="pill" data-med="Acetaminophen">Acetaminophen</button>
@@ -383,12 +315,12 @@
                         </div>
                         <div class="mt-6">
                             <button id="wizardNextStepFromMed"
-                                class="px-6 py-3 w-full rounded-md bg-green-600 hover:bg-green-500 text-lg font-semibold"
+                                class="px-6 py-3 w-full rounded-md bg-green-800 hover:bg-green-700 text-lg font-semibold"
                                 onclick="goToWizardStep3()">Next</button>
                         </div>
                         <div class="mt-4">
                             <button id="wizardBack"
-                                class="px-6 py-3 w-full rounded-md bg-gray-600 hover:bg-gray-500 text-lg font-semibold"
+                                class="px-6 py-3 w-full rounded-md bg-gray-700 hover:bg-gray-600 text-lg font-semibold"
                                 onclick="goToWizardStep1()">Back</button>
                         </div>
                     </div>
@@ -397,7 +329,6 @@
                         <h2 class="text-2xl font-bold mb-4">Step 3: Select Visual Aura Photo(s)</h2>
                         <p class="mb-4 text-lg text-gray-300">Please select one or more photos that best represent your
                             visual aura:</p>
-                        <!-- Grid of photo options -->
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="photoSelection">
                             <div class="photo-select" data-photo="img/aura1.jpg">
                                 <img src="img/aura1.jpg" alt="Aura 1">
@@ -426,30 +357,28 @@
                         </div>
                         <div class="mt-6">
                             <button id="wizardSubmit"
-                                class="px-6 py-3 w-full rounded-md bg-blue-700 hover:bg-blue-600 text-lg font-semibold"
+                                class="px-6 py-3 w-full rounded-md bg-blue-800 hover:bg-blue-700 text-lg font-semibold"
                                 onclick="submitAdvancedLog()">Submit Log</button>
                         </div>
                         <div class="mt-4">
                             <button id="wizardBackFromPhotos"
-                                class="px-6 py-3 w-full rounded-md bg-gray-600 hover:bg-gray-500 text-lg font-semibold"
+                                class="px-6 py-3 w-full rounded-md bg-gray-700 hover:bg-gray-600 text-lg font-semibold"
                                 onclick="goToWizardStep2()">Back</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- End Advanced Tab (Wizard) -->
-
+            <!-- End Advanced Tab -->
             <!-- History Tab -->
             <div id="historyTab" class="hidden tab-content flex flex-col gap-6">
-                <!-- Favorites Filter Button -->
                 <div class="flex justify-end mb-4">
-                    <button class="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded"
-                        onclick="toggleFavoriteFilter()">Filter Favorites: <span
-                            id="favoriteFilterStatus">Off</span></button>
+                    <button class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded" onclick="toggleFavoriteFilter()">
+                        Filter Favorites: <span id="favoriteFilterStatus">Off</span>
+                    </button>
                 </div>
                 <p class="font-semibold text-xl mb-2">Recent Logs</p>
                 <div id="logHistory" class="flex flex-col gap-3">
-                    <!-- Log entries will be rendered here -->
+                    <!-- Log entries will render here -->
                 </div>
             </div>
         </div>
@@ -461,7 +390,7 @@
         <div class="absolute inset-0 modal-backdrop" onclick="closePhotoModal()"></div>
         <div class="relative bg-white p-4 rounded shadow-lg z-10">
             <img id="photoModalImg" src="" alt="Photo Preview" class="max-w-full max-h-screen">
-            <button class="mt-4 px-4 py-2 bg-blue-700 hover:bg-blue-600 text-white rounded"
+            <button class="mt-4 px-4 py-2 bg-blue-800 hover:bg-blue-700 text-white rounded"
                 onclick="closePhotoModal()">Close</button>
         </div>
     </div>
@@ -498,7 +427,7 @@
             <div class="flex justify-end gap-2">
                 <button class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-sm text-white"
                     onclick="closeSettings()">Cancel</button>
-                <button class="px-4 py-2 rounded-md bg-blue-700 hover:bg-blue-600 text-sm text-white font-semibold"
+                <button class="px-4 py-2 rounded-md bg-blue-800 hover:bg-blue-700 text-sm text-white font-semibold"
                     onclick="saveDefaultSettings()">Save</button>
             </div>
         </div>
@@ -536,7 +465,7 @@
             <div class="flex justify-end gap-2 mt-4">
                 <button id="cancelEditLog" class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-white"
                     onclick="closeEditLogModal()">Cancel</button>
-                <button id="saveEditLog" class="px-4 py-2 rounded-md bg-blue-700 hover:bg-blue-600 text-white"
+                <button id="saveEditLog" class="px-4 py-2 rounded-md bg-blue-800 hover:bg-blue-700 text-white"
                     onclick="saveEditedLog()">Save</button>
             </div>
         </div>
@@ -550,34 +479,24 @@
             toast.className = "toast";
             toast.innerText = message;
             container.appendChild(toast);
-            // Remove the toast after 3 seconds (matches animation duration)
             setTimeout(() => {
                 toast.remove();
             }, 3000);
         }
 
-        // Global log storage for analytics
+        // Global log storage and configuration
         let logEntries = [];
-        // Global variable for assigning unique log IDs
         let nextLogId = 1;
-        // Pre-configured defaults
         let defaultPain = 5;
-        // Allow multiple default medications – stored as an array. If none selected, default to ["None"]
         let defaultMed = ["None"];
-        // For default medication selection in settings modal
         let selectedDefaultMed = [];
-        // Global variable for tracking the currently edited log (by id)
         let currentEditingLogId = null;
-
-        // Variables for Advanced Log Wizard selections
         let wizardAuraSelections = [];
         let wizardMedSelections = [];
         let wizardPhotoSelections = [];
-
-        // Global favorite filter flag
         let favoriteFilter = false;
 
-        // Helper function to activate a tab in the main app
+        // Helper function to activate a tab
         function activateTab(tabId) {
             document.querySelectorAll(".tab-btn").forEach(btn => {
                 btn.classList.remove("active");
@@ -588,18 +507,14 @@
             tabButton.classList.remove("inactive");
             document.querySelectorAll(".tab-content").forEach(tc => tc.classList.add("hidden"));
             document.getElementById(tabId).classList.remove("hidden");
-
-            // Reset the wizard to step one when Advanced tab is activated
             if (tabId === "advancedTab" && document.getElementById("wizardStep1")) {
                 activateWizardStep(1);
             }
         }
 
-        // Landing page navigation functions
+        // Landing page functions
         function logQuickEpisode() {
-            const now = new Date();
-            // Use full date and time for quick log
-            const dt = now.toLocaleString();
+            const dt = new Date().toLocaleString();
             const logEntry = {
                 id: nextLogId++,
                 time: dt,
@@ -616,13 +531,12 @@
             };
             addLogEntry(logEntry);
             updateChart(0, false);
-            showToast("Quick aura log saved using your default meds!");
+            showToast("Instant log saved with current date & time. Add details later.");
         }
 
         function startAdvancedLog() {
             document.getElementById('landingPage').classList.add('hidden');
             document.getElementById('mainApp').classList.add('visible');
-            // Load the wizard into the Advanced Tab
             document.getElementById('advancedTab').innerHTML = document.getElementById('advancedWizardTemplate').innerHTML;
             activateWizardStep(1);
             activateTab('advancedTab');
@@ -640,21 +554,16 @@
             document.getElementById('landingPage').classList.remove('hidden');
         }
 
-        // Existing settings button on mainApp
+        // Settings modal functions
         document.getElementById("openSettings").addEventListener("click", () => {
             document.getElementById("settingsModal").classList.remove("hidden");
         });
-
-        // New landing page settings button inside the main card
-        const landingSettingsBtn = document.getElementById("openSettingsLanding");
-        landingSettingsBtn.addEventListener("click", () => {
+        document.getElementById("openSettingsLanding").addEventListener("click", () => {
             document.getElementById("settingsModal").classList.remove("hidden");
         });
-
         function closeSettings() {
             document.getElementById("settingsModal").classList.add("hidden");
         }
-
         function saveDefaultSettings() {
             const painInput = document.getElementById("defaultPain").value;
             defaultPain = painInput ? painInput : 5;
@@ -663,12 +572,9 @@
             showToast("Default settings saved!");
             closeSettings();
         }
-
         document.getElementById("defaultPain").addEventListener("input", (e) => {
             document.getElementById("defaultPainValue").textContent = e.target.value;
         });
-
-        // Preselect default medications in settings modal (allow multi-select)
         document.addEventListener("DOMContentLoaded", function () {
             const defaultMedPills = document.querySelectorAll("#defaultMedPills .pill");
             defaultMedPills.forEach(pill => {
@@ -684,7 +590,7 @@
             });
         });
 
-        // --- Advanced Log Wizard Functions ---
+        // Advanced Log Wizard Functions
         document.addEventListener("click", function (e) {
             if (e.target.matches("#auraPillsWizard .pill")) {
                 e.target.classList.toggle("selected");
@@ -700,7 +606,6 @@
                 updateWizardPhotoSelections();
             }
         });
-
         function updateWizardAuraSelections() {
             wizardAuraSelections = [];
             const auraButtons = document.querySelectorAll("#auraPillsWizard .pill");
@@ -710,7 +615,6 @@
                 }
             });
         }
-
         function updateWizardMedSelections() {
             wizardMedSelections = [];
             const medButtons = document.querySelectorAll("#medPillsWizard .pill");
@@ -720,7 +624,6 @@
                 }
             });
         }
-
         function updateWizardPhotoSelections() {
             wizardPhotoSelections = [];
             const photoButtons = document.querySelectorAll("#photoSelection .photo-select.selected");
@@ -728,7 +631,6 @@
                 wizardPhotoSelections.push(btn.getAttribute("data-photo"));
             });
         }
-
         function activateWizardStep(step) {
             if (step === 1) {
                 document.getElementById("wizardStep1").classList.remove("hidden");
@@ -744,7 +646,6 @@
                 document.getElementById("wizardStep3").classList.remove("hidden");
             }
         }
-
         function goToWizardStep2() {
             updateWizardAuraSelections();
             if (wizardAuraSelections.length === 0) {
@@ -753,16 +654,13 @@
             }
             activateWizardStep(2);
         }
-
         function goToWizardStep1() {
             activateWizardStep(1);
         }
-
         function goToWizardStep3() {
             updateWizardPhotoSelections();
             activateWizardStep(3);
         }
-
         function submitAdvancedLog() {
             updateWizardMedSelections();
             updateWizardPhotoSelections();
@@ -786,7 +684,7 @@
             };
             addLogEntry(logEntry);
             updateChart(0, false);
-            showToast("Advanced migraine log saved!");
+            showToast("Advanced log saved!");
             wizardAuraSelections = [];
             wizardMedSelections = [];
             wizardPhotoSelections = [];
@@ -795,15 +693,13 @@
             document.querySelectorAll("#photoSelection .photo-select").forEach(btn => btn.classList.remove("selected"));
             goHome();
         }
-        // --- End Advanced Log Wizard Functions ---
 
-        // --- History UI Functions and Favorites ---
+        // History and Favorites Functions
         function createLogCard(entry) {
             let card = document.createElement("div");
             card.className = "log-card";
             card.setAttribute("data-log-id", entry.id);
             card.style.setProperty("--log-border-color", entry.quick ? "#3B82F6" : "#10B981");
-
             let headerColor, typeText;
             if (entry.quick) {
                 headerColor = "bg-blue-700";
@@ -812,12 +708,11 @@
                 headerColor = "bg-green-700";
                 typeText = "Advanced Log";
             }
-
             let details = `
         <div class="log-card-header flex justify-between items-center mb-2">
           <div class="flex items-center">
             <div class="text-lg font-bold">${entry.time}</div>
-            <button onclick="toggleFavorite(${entry.id})" class="ml-4 favorite-btn">
+            <button onclick="toggleFavorite(${entry.id})" class="ml-4">
               ${entry.favorite ?
                     `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current text-yellow-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.447a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.37 2.447c-.784.57-1.84-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.642 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z"/></svg>` :
                     `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 stroke-current text-yellow-400" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.447a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.37 2.447c-.784.57-1.84-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.642 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z"/></svg>`
@@ -861,11 +756,9 @@
             card.innerHTML = details;
             return card;
         }
-
         function renderHistory() {
             const logContainer = document.getElementById("logHistory");
             logContainer.innerHTML = "";
-            // Render in reverse order (most recent first)
             for (let i = logEntries.length - 1; i >= 0; i--) {
                 const entry = logEntries[i];
                 if (!favoriteFilter || entry.favorite) {
@@ -874,16 +767,13 @@
                 }
             }
         }
-
         function addLogEntry(entry) {
             logEntries.push(entry);
             renderHistory();
         }
-
         function updateLogCard(logEntry) {
             renderHistory();
         }
-
         function toggleFavorite(logId) {
             const entry = logEntries.find(e => e.id === logId);
             if (entry) {
@@ -891,20 +781,15 @@
                 renderHistory();
             }
         }
-
         function toggleFavoriteFilter() {
             favoriteFilter = !favoriteFilter;
             document.getElementById("favoriteFilterStatus").textContent = favoriteFilter ? "On" : "Off";
             renderHistory();
         }
-
-        // --- Placeholder Chart Function (no functionality here) ---
         function updateChart(pain, auraFlag) {
-            // No functionality in this version.
+            // Placeholder function
         }
         updateChart(0, false);
-
-        // --- Photo Modal Functions ---
         function openPhotoModal(url) {
             document.getElementById("photoModalImg").src = url;
             document.getElementById("photoModal").classList.remove("hidden");
@@ -912,8 +797,6 @@
         function closePhotoModal() {
             document.getElementById("photoModal").classList.add("hidden");
         }
-
-        // --- Edit Log Modal Functions ---
         function openEditLogModal(logId) {
             currentEditingLogId = logId;
             const logEntry = logEntries.find(entry => entry.id === logId);
@@ -924,12 +807,10 @@
             document.getElementById("auraHeadacheInput").checked = (logEntry.auraHeadache && logEntry.auraHeadache !== "Not set" && logEntry.auraHeadache === "Yes");
             document.getElementById("editLogModal").classList.remove("hidden");
         }
-
         function closeEditLogModal() {
             document.getElementById("editLogModal").classList.add("hidden");
             currentEditingLogId = null;
         }
-
         function saveEditedLog() {
             const pain = document.getElementById("painInput").value;
             const auraDuration = document.getElementById("auraDurationInput").value;
@@ -949,7 +830,6 @@
 
     <!-- Advanced Log Wizard Template -->
     <template id="advancedWizardTemplate">
-        <!-- Wizard Step 1: Date/Time & Aura Selection -->
         <div id="wizardStep1" class="wizard-step">
             <h2 class="text-2xl font-bold mb-4">Step 1: Select Aura Type</h2>
             <div class="mb-6">
@@ -958,7 +838,6 @@
                     class="w-full p-3 rounded-md bg-white/20 border-none outline-none" />
             </div>
             <p class="mb-4 text-lg text-gray-300">Please select the aura type(s) you experienced:</p>
-            <!-- Grid of square aura buttons -->
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="auraPillsWizard">
                 <button type="button" class="pill" data-aura="Flashing Lights">Flashing Lights</button>
                 <button type="button" class="pill" data-aura="Zigzag Patterns">Zigzag Patterns</button>
@@ -977,15 +856,13 @@
             </div>
             <div class="mt-6">
                 <button id="wizardNextStep"
-                    class="px-6 py-3 w-full rounded-md bg-green-600 hover:bg-green-500 text-lg font-semibold"
+                    class="px-6 py-3 w-full rounded-md bg-green-800 hover:bg-green-700 text-lg font-semibold"
                     onclick="goToWizardStep2()">Next</button>
             </div>
         </div>
-        <!-- Wizard Step 2: Medication Selection -->
         <div id="wizardStep2" class="wizard-step hidden">
             <h2 class="text-2xl font-bold mb-4">Step 2: Select Medications</h2>
             <p class="mb-4 text-lg text-gray-300">Please select the medication(s) you took:</p>
-            <!-- Grid of square medication buttons -->
             <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="medPillsWizard">
                 <button type="button" class="pill" data-med="Ibuprofen">Ibuprofen</button>
                 <button type="button" class="pill" data-med="Acetaminophen">Acetaminophen</button>
@@ -1003,21 +880,19 @@
             </div>
             <div class="mt-6">
                 <button id="wizardNextStepFromMed"
-                    class="px-6 py-3 w-full rounded-md bg-green-600 hover:bg-green-500 text-lg font-semibold"
+                    class="px-6 py-3 w-full rounded-md bg-green-800 hover:bg-green-700 text-lg font-semibold"
                     onclick="goToWizardStep3()">Next</button>
             </div>
             <div class="mt-4">
                 <button id="wizardBack"
-                    class="px-6 py-3 w-full rounded-md bg-gray-600 hover:bg-gray-500 text-lg font-semibold"
+                    class="px-6 py-3 w-full rounded-md bg-gray-700 hover:bg-gray-600 text-lg font-semibold"
                     onclick="goToWizardStep1()">Back</button>
             </div>
         </div>
-        <!-- Wizard Step 3: Photo Selection -->
         <div id="wizardStep3" class="wizard-step hidden">
             <h2 class="text-2xl font-bold mb-4">Step 3: Select Visual Aura Photo(s)</h2>
             <p class="mb-4 text-lg text-gray-300">Please select one or more photos that best represent your visual aura:
             </p>
-            <!-- Grid of photo options -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="photoSelection">
                 <div class="photo-select" data-photo="img/aura1.jpg">
                     <img src="img/aura1.jpg" alt="Aura 1">
@@ -1046,12 +921,12 @@
             </div>
             <div class="mt-6">
                 <button id="wizardSubmit"
-                    class="px-6 py-3 w-full rounded-md bg-blue-700 hover:bg-blue-600 text-lg font-semibold"
+                    class="px-6 py-3 w-full rounded-md bg-blue-800 hover:bg-blue-700 text-lg font-semibold"
                     onclick="submitAdvancedLog()">Submit Log</button>
             </div>
             <div class="mt-4">
                 <button id="wizardBackFromPhotos"
-                    class="px-6 py-3 w-full rounded-md bg-gray-600 hover:bg-gray-500 text-lg font-semibold"
+                    class="px-6 py-3 w-full rounded-md bg-gray-700 hover:bg-gray-600 text-lg font-semibold"
                     onclick="goToWizardStep2()">Back</button>
             </div>
         </div>
