@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>QuickTrack Migraine Logger</title>
+    <title>TEMP</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Background and typography */
@@ -175,14 +175,280 @@
         .process-card:hover {
             transform: scale(1.02);
         }
+
+        /* History Container Styles */
+        /* Base History Tab Styles */
+        #historyTab {
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        /* History Container */
+        .history-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.5rem;
+        }
+
+        /* History Header */
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 1rem;
+        }
+
+        .filter-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(to right, rgba(59, 130, 246, 0.2), rgba(147, 197, 253, 0.2));
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(147, 197, 253, 0.2);
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .filter-button:hover {
+            background: linear-gradient(to right, rgba(59, 130, 246, 0.3), rgba(147, 197, 253, 0.3));
+            border-color: rgba(147, 197, 253, 0.3);
+        }
+
+        .filter-button.active {
+            background: linear-gradient(to right, rgba(59, 130, 246, 0.4), rgba(147, 197, 253, 0.4));
+            border-color: rgba(147, 197, 253, 0.4);
+        }
+
+        /* Log Cards */
+        .log-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(12px);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .log-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .log-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--log-border-color, #3B82F6);
+        }
+
+        .log-card.quick::before {
+            background: linear-gradient(to bottom, #3B82F6, #93C5FD);
+        }
+
+        .log-card.advanced::before {
+            background: linear-gradient(to bottom, #10B981, #6EE7B7);
+        }
+
+        .log-card-inner {
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Card Header */
+        .log-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .log-timestamp {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .timestamp-icon {
+            color: rgba(255, 255, 255, 0.5);
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .timestamp-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .log-type-badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .log-type-badge.quick {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            border: 1px solid rgba(147, 197, 253, 0.2);
+        }
+
+        .log-type-badge.advanced {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+            border: 1px solid rgba(110, 231, 183, 0.2);
+        }
+
+        /* Card Content */
+        .log-card-content {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .info-group {
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.4;
+        }
+
+        /* Photos Section */
+        .photos-section {
+            grid-column: 1 / -1;
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .photos-grid {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            padding: 0.375rem;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        }
+
+        .photos-grid::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .photos-grid::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .photos-grid::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        .aura-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 0.375rem;
+            object-fit: cover;
+            transition: transform 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .aura-photo:hover {
+            transform: scale(1.05);
+        }
+
+        /* Card Actions */
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .action-btn {
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn.edit {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .action-btn.edit:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .favorite-btn {
+            padding: 0.375rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .favorite-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+
+        .favorite-btn.active {
+            background: rgba(234, 179, 8, 0.2);
+        }
     </style>
 </head>
 
 <body class="min-h-screen">
-    <!-- Toast Notification Container -->
     <div id="toast-container"></div>
 
-    <!-- Redesigned Landing Page -->
+    <!-- Landing Page -->
     <div id="landingPage" class="min-h-screen flex flex-col items-center justify-center p-4 space-y-10">
         <!-- Instant Log Section -->
         <div class="bg-black bg-opacity-70 p-10 rounded-xl shadow-2xl max-w-3xl w-full text-center relative">
@@ -196,8 +462,16 @@
                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
             </button>
+            <!-- Help Icon -->
+            <button id="openHelpLanding" class="absolute top-4 left-4 focus:outline-none" title="Help">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-300 hover:text-blue-400" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 15h.01M12 7a3 3 0 013 3c0 1.5-1 2.5-2 3l-1 1" />
+                </svg>
+            </button>
             <h1 class="text-5xl font-extrabold text-white mb-4">Instant Log</h1>
-            <p class="text-xl text-gray-200 mb-8">One click records the current date & time. Edit details later.</p>
+            <p class="text-xl text-gray-200 mb-8">One click records the current date & time. Add details later.</p>
             <button onclick="logQuickEpisode()"
                 class="w-full md:w-auto h-20 bg-blue-800 hover:bg-blue-700 text-3xl font-bold rounded-lg shadow-xl px-8 py-4 focus:outline-none focus:ring-4 focus:ring-blue-400 text-white">
                 Instant Log
@@ -207,32 +481,35 @@
         <div class="bg-black bg-opacity-70 p-8 rounded-xl shadow-2xl max-w-3xl w-full">
             <h2 class="text-3xl font-bold text-white mb-6">How It Works</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Precision Log Explanation (clickable) -->
-                <div onclick="startAdvancedLog()" class="process-card bg-green-900 p-4 rounded-lg hover:bg-green-800">
-                    <h3 class="text-xl font-semibold text-white mb-2">Precision Log</h3>
+                <!-- Default Meds Card -->
+                <div onclick="document.getElementById('settingsModal').classList.remove('hidden')"
+                    class="process-card bg-glass-midnight/40 backdrop-blur-lg border border-white/5 p-4 rounded-lg hover:bg-glass-midnight/50 transition-all duration-300 shadow-xl">
+                    <h3 class="text-xl font-semibold text-white bg-green-500 rounded p-1 mb-2">Set Default Meds</h3>
+                    <p class="text-sm text-gray-300">
+                        Set your default medicine cocktail in order to use the Instant Log button.
+                    </p>
+                </div>
+                <!-- Precision Log Card -->
+                <div onclick="startAdvancedLog()"
+                    class="process-card bg-glass-navy/40 backdrop-blur-lg border border-white/5 p-4 rounded-lg hover:bg-glass-navy/50 transition-all duration-300 shadow-xl">
+                    <h3 class="text-xl font-semibold text-white bg-red-500 rounded p-1 mb-2">Precision Log</h3>
                     <p class="text-sm text-gray-300">
                         Log detailed information including aura types, medications, and more for comprehensive records.
                     </p>
                 </div>
-                <!-- History Explanation (clickable) -->
-                <div onclick="startHistory()" class="process-card bg-purple-900 p-4 rounded-lg hover:bg-purple-800">
-                    <h3 class="text-xl font-semibold text-white mb-2">History</h3>
+
+                <!-- History Card -->
+                <div onclick="startHistory()"
+                    class="process-card bg-glass-purple/35 backdrop-blur-lg border border-white/5 p-4 rounded-lg hover:bg-glass-purple/45 transition-all duration-300 shadow-xl">
+                    <h3 class="text-xl font-semibold text-white bg-purple-500 rounded p-1 mb-2">History</h3>
                     <p class="text-sm text-gray-300">
                         View and filter past logs to track patterns and triggers over time.
-                    </p>
-                </div>
-                <!-- Default Meds Explanation (clickable) -->
-                <div onclick="document.getElementById('settingsModal').classList.remove('hidden')"
-                    class="process-card bg-blue-900 p-4 rounded-lg hover:bg-blue-800">
-                    <h3 class="text-xl font-semibold text-white mb-2">Default Meds</h3>
-                    <p class="text-sm text-gray-300">
-                        Set your default medicine cocktail in Settings for a faster Instant Log experience.
                     </p>
                 </div>
             </div>
         </div>
     </div>
-    <!-- End Landing Page -->
+
 
     <!-- Main Application (initially hidden) -->
     <div id="mainApp" class="min-h-screen text-white flex items-center justify-center p-4">
@@ -251,7 +528,15 @@
                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
             </button>
-            <h1 class="text-3xl font-extrabold text-center mb-4 mt-10">Migraine Logger v2.6</h1>
+            <!-- Help Icon -->
+            <button id="openHelp" class="absolute top-4 left-4 focus:outline-none" title="Help">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-300 hover:text-blue-400" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 15h.01M12 7a3 3 0 013 3c0 1.5-1 2.5-2 3l-1 1" />
+                </svg>
+            </button>
+            <h1 class="text-3xl font-extrabold text-center mb-4 mt-10">Quick Track v4.7</h1>
             <!-- Tabs Navigation -->
             <div class="flex justify-center gap-4 mb-6 border-b border-white/20">
                 <button class="tab-btn active" data-target="advancedTab"
@@ -271,8 +556,9 @@
                                 class="w-full p-3 rounded-md bg-white/20 border-none outline-none" />
                         </div>
                         <p class="mb-4 text-lg text-gray-300">Please select the aura type(s) you experienced:</p>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="auraPillsWizard">
-                            <button type="button" class="pill" data-aura="Flashing Lights">Flashing Lights</button>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 justify-items-center" id="auraPillsWizard">
+                            <button type="button" class="pill" data-aura="Flashing Lights">Flashing
+                                Lights</button>
                             <button type="button" class="pill" data-aura="Zigzag Patterns">Zigzag Patterns</button>
                             <button type="button" class="pill" data-aura="Blind Spots">Blind Spots</button>
                             <button type="button" class="pill" data-aura="Scintillating Scotoma">Scintillating
@@ -298,7 +584,7 @@
                     <div id="wizardStep2" class="wizard-step hidden">
                         <h2 class="text-2xl font-bold mb-4">Step 2: Select Medications</h2>
                         <p class="mb-4 text-lg text-gray-300">Please select the medication(s) you took:</p>
-                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="medPillsWizard">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 justify-items-center" id="medPillsWizard">
                             <button type="button" class="pill" data-med="Ibuprofen">Ibuprofen</button>
                             <button type="button" class="pill" data-med="Acetaminophen">Acetaminophen</button>
                             <button type="button" class="pill" data-med="Aspirin">Aspirin</button>
@@ -329,7 +615,7 @@
                         <h2 class="text-2xl font-bold mb-4">Step 3: Select Visual Aura Photo(s)</h2>
                         <p class="mb-4 text-lg text-gray-300">Please select one or more photos that best represent your
                             visual aura:</p>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="photoSelection">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 justify-items-center" id="photoSelection">
                             <div class="photo-select" data-photo="img/aura1.jpg">
                                 <img src="img/aura1.jpg" alt="Aura 1">
                             </div>
@@ -370,15 +656,23 @@
             </div>
             <!-- End Advanced Tab -->
             <!-- History Tab -->
-            <div id="historyTab" class="hidden tab-content flex flex-col gap-6">
-                <div class="flex justify-end mb-4">
-                    <button class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded" onclick="toggleFavoriteFilter()">
-                        Filter Favorites: <span id="favoriteFilterStatus">Off</span>
-                    </button>
-                </div>
-                <p class="font-semibold text-xl mb-2">Recent Logs</p>
-                <div id="logHistory" class="flex flex-col gap-3">
-                    <!-- Log entries will render here -->
+            <div id="historyTab" class="hidden tab-content">
+                <div class="history-container">
+                    <div class="history-header">
+                        <h2 class="text-2xl font-bold">History</h2>
+                        <button class="filter-button" onclick="toggleFavoriteFilter()" id="favoriteFilterButton">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                            </svg>
+                            <span>Filter Favorites</span>
+                            <span id="favoriteFilterStatus" class="ml-2 text-sm">Off</span>
+                        </button>
+                    </div>
+                    <div id="logHistory" class="space-y-4">
+                        <!-- Log entries will render here -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -429,6 +723,48 @@
                     onclick="closeSettings()">Cancel</button>
                 <button class="px-4 py-2 rounded-md bg-blue-800 hover:bg-blue-700 text-sm text-white font-semibold"
                     onclick="saveDefaultSettings()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="fixed inset-0 flex items-center justify-center hidden overflow-scroll"
+        style="z-index: 2000;">
+        <div class="absolute inset-0 modal-backdrop"></div>
+        <div class="relative glass-card rounded-xl p-6 max-w-sm w-full">
+            <h2 class="text-2xl font-bold mb-4 text-white">How to use Quick Track:</h2>
+            <hr class="mb-4">
+            <div class="mb-4">
+                <!--Default meds explaination-->
+                <p class="text-white"><span class="text-white bg-green-500 p-1 rounded shadow-md"> Set Default
+                        Meds</span>
+                    is where you will set your default medication cocktail and usual pain level. This information will
+                    be recorded when using instant log.</p>
+                <br>
+                <!--Instant log explaination-->
+                <p class="text-white"><span class="text-white bg-blue-700 p-1 rounded shadow-md">Instant
+                        Log</span> allows you to
+                    instantly
+                    log the time and
+                    date of
+                    your migraine
+                    episode with a single tap. Once your episode is over, you can add fields like "Pain", "Aura
+                    duration", and more.</p>
+                <br>
+                <!--Precision log tab explaination-->
+                <p class="text-white"><span class="text-white bg-red-500 p-1 rounded shadow-md">Precision
+                        Log</span> allows you to log your migraine episode in great detail, including which medications
+                    you take, aura symptoms, and more.</p>
+                <br>
+                <!--History tab explaination-->
+                <p class="text-white"><span class="text-white bg-purple-500 p-1 rounded shadow-md">History</span> is
+                    where
+                    you'll view all of your episodes. From this page, you can view, edit or favorite your migraine
+                    episodes for later.</p>
+            </div>
+            <div class="flex justify-end gap-2">
+                <button class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-sm text-white"
+                    onclick="closeHelp()">Close</button>
             </div>
         </div>
     </div>
@@ -540,6 +876,7 @@
             document.getElementById('advancedTab').innerHTML = document.getElementById('advancedWizardTemplate').innerHTML;
             activateWizardStep(1);
             activateTab('advancedTab');
+            document.getElementById("openHelp").classList.add("hidden");
         }
 
         function startHistory() {
@@ -589,6 +926,17 @@
                 });
             });
         });
+
+        // Help modal functions
+        document.getElementById("openHelp").addEventListener("click", () => {
+            document.getElementById("helpModal").classList.remove("hidden");
+        });
+        document.getElementById("openHelpLanding").addEventListener("click", () => {
+            document.getElementById("helpModal").classList.remove("hidden");
+        });
+        function closeHelp() {
+            document.getElementById("helpModal").classList.add("hidden");
+        }
 
         // Advanced Log Wizard Functions
         document.addEventListener("click", function (e) {
@@ -697,65 +1045,140 @@
         // History and Favorites Functions
         function createLogCard(entry) {
             let card = document.createElement("div");
-            card.className = "log-card";
+            card.className = `log-card ${entry.quick ? 'quick' : 'advanced'}`;
             card.setAttribute("data-log-id", entry.id);
-            card.style.setProperty("--log-border-color", entry.quick ? "#3B82F6" : "#10B981");
-            let headerColor, typeText;
-            if (entry.quick) {
-                headerColor = "bg-blue-700";
-                typeText = "Quick Log";
-            } else {
-                headerColor = "bg-green-700";
-                typeText = "Advanced Log";
-            }
-            let details = `
-        <div class="log-card-header flex justify-between items-center mb-2">
-          <div class="flex items-center">
-            <div class="text-lg font-bold">${entry.time}</div>
-            <button onclick="toggleFavorite(${entry.id})" class="ml-4">
-              ${entry.favorite ?
-                    `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current text-yellow-400" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.447a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.37 2.447c-.784.57-1.84-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.642 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z"/></svg>` :
-                    `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 stroke-current text-yellow-400" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.447a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.37 2.447c-.784.57-1.84-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.642 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z"/></svg>`
-                }
-            </button>
-          </div>
-          <div class="log-type ${headerColor} text-xs px-2 py-1 rounded">${typeText}</div>
+
+            let cardContent = `
+    <div class="log-card-inner">
+      <div class="log-card-header">
+        <div class="log-timestamp">
+          <svg class="timestamp-icon h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span class="timestamp-text">${entry.time}</span>
         </div>
-      `;
+        <div class="flex items-center gap-3">
+          <div class="log-type-badge ${entry.quick ? 'quick' : 'advanced'}">
+            ${entry.quick ?
+                    '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>' :
+                    '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+                }
+            ${entry.quick ? 'Instant Log' : 'Advanced Log'}
+          </div>
+          <button onclick="toggleFavorite(${entry.id})" class="favorite-btn ${entry.favorite ? 'active' : ''}">
+            ${entry.favorite ?
+                    `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.447a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.37 2.447c-.784.57-1.84-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.642 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z"/>
+              </svg>` :
+                    `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.447a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.37 2.447c-.784.57-1.84-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.642 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z"/>
+              </svg>`
+                }
+          </button>
+        </div>
+      </div>
+
+      <div class="log-card-content">`;
+
+            // Primary Information
             if (entry.quick) {
-                details += `<p>Default Meds: ${entry.meds}</p>`;
+                cardContent += `
+      <div class="info-group">
+        <div class="info-label">Default Medications</div>
+        <div class="info-value">${entry.meds}</div>
+      </div>`;
             } else {
-                details += `<p>Aura: ${entry.aura}</p>`;
-                details += `<p>Meds: ${entry.meds}</p>`;
+                cardContent += `
+      <div class="info-group">
+        <div class="info-label">Medications</div>
+        <div class="info-value">${entry.meds}</div>
+      </div>
+      <div class="info-group">
+        <div class="info-label">Aura Types</div>
+        <div class="info-value">${entry.aura}</div>
+      </div>`;
             }
+
+            // Pain and Duration
             if (entry.pain && entry.pain !== "Not set") {
-                details += `<p><strong>Pain:</strong> ${entry.pain}</p>`;
+                cardContent += `
+      <div class="info-group">
+        <div class="info-label">Pain Level</div>
+        <div class="info-value">${entry.pain}</div>
+      </div>`;
             }
+
             if (entry.auraDuration && entry.auraDuration !== "Not set") {
-                details += `<p><strong>Aura Duration:</strong> ${entry.auraDuration}</p>`;
+                cardContent += `
+      <div class="info-group">
+        <div class="info-label">Aura Duration</div>
+        <div class="info-value">${entry.auraDuration}</div>
+      </div>`;
             }
-            if (entry.triggers && entry.triggers !== "Not set") {
-                details += `<p><strong>Triggers:</strong> ${entry.triggers}</p>`;
-            }
-            if (entry.auraDescription && entry.auraDescription !== "Not set") {
-                details += `<p><strong>Aura Description:</strong> ${entry.auraDescription}</p>`;
-            }
+
+            // Aura Headache Status
             if (entry.auraHeadache && entry.auraHeadache !== "Not set") {
-                details += `<p><strong>Aura Followed by Headache:</strong> ${entry.auraHeadache}</p>`;
+                cardContent += `
+      <div class="info-group">
+        <div class="info-label">Aura Followed by Headache</div>
+        <div class="info-value">${entry.auraHeadache}</div>
+      </div>`;
             }
+
+            // Triggers
+            if (entry.triggers && entry.triggers !== "Not set") {
+                cardContent += `
+      <div class="info-group full-width">
+        <div class="info-label">Triggers</div>
+        <div class="info-value">${entry.triggers}</div>
+      </div>`;
+            }
+
+            // Aura Description
+            if (entry.auraDescription && entry.auraDescription !== "Not set") {
+                cardContent += `
+      <div class="info-group full-width">
+        <div class="info-label">Aura Description</div>
+        <div class="info-value">${entry.auraDescription}</div>
+      </div>`;
+            }
+
+            // Photos
             if (entry.photos && entry.photos.length > 0) {
-                details += `<div class="mt-2 flex gap-2">`;
-                entry.photos.forEach(photoUrl => {
-                    details += `<img src="${photoUrl}" alt="Aura Photo" class="w-16 h-16 object-cover rounded-md shadow cursor-pointer" onclick="openPhotoModal('${photoUrl}')">`;
-                });
-                details += `</div>`;
+                cardContent += `
+      <div class="photos-section">
+        <div class="info-label">Aura Photos</div>
+        <div class="photos-grid">
+          ${entry.photos.map(photoUrl => `
+            <img src="${photoUrl}" alt="Aura Photo" class="aura-photo cursor-pointer" 
+              onclick="openPhotoModal('${photoUrl}')">
+          `).join('')}
+        </div>
+      </div>`;
             }
-            details += `<div class="mt-2 flex gap-2">
-                    <button class="edit-log-btn px-2 py-1 bg-gray-500 hover:bg-gray-400 text-white rounded text-xs" onclick="openEditLogModal(${entry.id})">Edit</button>
-                  </div>`;
-            card.innerHTML = details;
+
+            // Actions
+            cardContent += `
+      </div>
+      <div class="card-actions">
+        <button class="action-btn edit" onclick="openEditLogModal(${entry.id})">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+          </svg>
+          Edit Details
+        </button>
+      </div>
+    </div>`;
+
+            card.innerHTML = cardContent;
             return card;
         }
+
+
+
+
         function renderHistory() {
             const logContainer = document.getElementById("logHistory");
             logContainer.innerHTML = "";
@@ -766,6 +1189,7 @@
                     logContainer.appendChild(card);
                 }
             }
+            document.getElementById("openHelp").classList.add("hidden")
         }
         function addLogEntry(entry) {
             logEntries.push(entry);
