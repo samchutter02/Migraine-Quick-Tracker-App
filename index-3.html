@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quick Track v6 - samcwebdev</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Background and typography */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(120deg, #1a1a4a, #3a3a8a, #6a3aaa, #9a5ada);
+            background-attachment: fixed;
+            background-size: cover;
+            color: white;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* Glass card styling */
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        /* Pill styling */
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            margin: 0.1rem;
+            border-radius: 10px;
+            font-size: .8rem;
+            font-weight: 700;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            white-space: wrap;
+            transition: .1s ease-in-out;
+        }
+
+        .pill:hover {
+            transform: scale(1.02);
+            border-color: rgba(255, 255, 255, 0.7);
+        }
+
+        #auraPillsWizard .pill.selected,
+        #medPillsWizard .pill.selected {
+            background-color: #8a4fc9;
+            border-color: transparent;
+        }
+
+        .pill.selected.pain-relief,
+        .pill.selected.prescription,
+        .pill.selected.preventative,
+        .pill.selected.supplement,
+        .pill.selected.other,
+        .pill.selected.n-a,
+        .pill.selected.none {
+            border: 5px solid white;
+        }
+
+        /* Wizard button sizing */
+        #auraPillsWizard .pill,
+        #medPillsWizard .pill {
+            width: 100px;
+            height: 100px;
+            font-size: 0.875rem;
+            padding: 0.5rem;
+        }
+
+        /* Photo selection styling */
+        .photo-select {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .photo-select:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 15px rgba(96, 41, 171, 0.3);
+        }
+
+        .photo-select.selected {
+            border: 5px solid #0800ff;
+            box-shadow: 0 0 20px rgba(138, 79, 201, 0.5);
+            background: rgba(138, 79, 201, 0.1);
+        }
+
+        .photo-select img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            filter: brightness(0.9) contrast(1.2);
+        }
+
+        .photo-select:hover img {
+            transform: scale(1.1);
+            filter: brightness(1) contrast(1.3);
+        }
+
+        /* Toast Notification Styles */
+        #toast-container {
+            position: fixed;
+            top: 10%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2100;
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .toast {
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            opacity: 0;
+            text-align: center;
+            animation: fadeInOut 3s forwards;
+            pointer-events: none;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            10%,
+            90% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        /* Landing page layout */
+        #landingPage {
+            position: absolute;
+            /* Changed from fixed to absolute */
+            inset: 0;
+            z-index: 1000;
+            transition: opacity 0.3s ease-in-out;
+            min-height: 100vh;
+            overflow-y: none;
+            /* Enable scrolling */
+            padding-bottom: 2rem;
+            /* Add padding at bottom for better scroll experience */
+        }
+
+        #landingPage.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Main app state */
+        #mainApp {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #mainApp.visible {
+            opacity: 1;
+        }
+
+        /* Blur effect for mainApp background */
+        #mainApp::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            filter: blur(8px);
+            z-index: -1;
+        }
+
+        /* Process overview card hover effect */
+        .process-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .process-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0px 4px 12px rgba(255, 255, 255, 0.1);
+        }
+
+        .process-card h3 {
+            background: none;
+            color: #E0E0E0;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+
+        /* History Container Styles */
+        /* Base History Tab Styles */
+        #historyTab {
+            background: transparent;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* History Container */
+        .history-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0.5rem;
+            background: transparent;
+        }
+
+        /* History Header */
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 1rem;
+        }
+
+        .filter-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(to right, rgba(59, 130, 246, 0.2), rgba(147, 197, 253, 0.2));
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(147, 197, 253, 0.2);
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .filter-button:hover {
+            background: linear-gradient(to right, rgba(59, 130, 246, 0.3), rgba(147, 197, 253, 0.3));
+            border-color: rgba(147, 197, 253, 0.3);
+        }
+
+        .filter-button.active {
+            background: linear-gradient(to right, rgba(59, 130, 246, 0.4), rgba(147, 197, 253, 0.4));
+            border-color: rgba(147, 197, 253, 0.4);
+        }
+
+        /* Log Cards */
+        .log-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(12px);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .log-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .log-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--log-border-color, #3B82F6);
+        }
+
+        .log-card.advanced::before,
+        .log-card.quick::before {
+            background: linear-gradient(to bottom, #3B82F6, #93C5FD);
+        }
+
+        .log-card-inner {
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Card Header */
+        .log-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .log-timestamp {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .timestamp-icon {
+            color: rgba(255, 255, 255, 0.5);
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .timestamp-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .log-type-badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .log-type-badge.quick {
+            background: #6f8af8;
+            color: #ffffff;
+            border: 1px solid rgba(147, 197, 253, 0.2);
+        }
+
+        .log-type-badge.advanced {
+            background: #be64d9;
+            color: #ffffff;
+            border: 1px solid rgba(110, 231, 183, 0.2);
+        }
+
+        /* Card Content */
+        .log-card-content {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .info-group {
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.4;
+        }
+
+        /* Photos Section */
+        .photos-section {
+            grid-column: 1 / -1;
+            margin-top: 0.75rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .photos-grid {
+            display: flex;
+            gap: 0.75rem;
+            overflow-x: auto;
+            padding: 0.375rem;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        }
+
+        .aura-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 0.375rem;
+            object-fit: cover;
+            transition: transform 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .aura-photo:hover {
+            transform: scale(1.05);
+        }
+
+        /* Card Actions */
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .action-btn {
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn.edit {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .action-btn.edit:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .favorite-btn {
+            padding: 0.375rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s ease;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .favorite-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+
+        .favorite-btn.active {
+            background: rgba(234, 179, 8, 0.2);
+        }
+
+        .set-meds-btn {
+            background: linear-gradient(135deg, #4A90E2, #76BDFE);
+            color: white;
+        }
+
+        .advanced-log-btn {
+            background: linear-gradient(135deg, #FF738E, #FEA6B8);
+            color: white;
+        }
+
+        .history-btn {
+            background: linear-gradient(135deg, #A07BFF, #C5A8FF);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+
+            /* Landing page adjustments */
+            body {
+                background: linear-gradient(120deg, #1a1a4a, #3a3a8a, #6a3aaa, #9a5ada);
+                background-attachment: fixed;
+                background-size: cover;
+            }
+
+            html,
+            body {
+                overscroll-behavior-y: auto;
+                overflow-y: auto;
+            }
+
+            #landingPage {
+                position: relative;
+                /* Changed from absolute */
+                width: 100%;
+                min-height: 100vh;
+                overflow-y: auto;
+                /* Proper scrolling */
+                overflow-x: hidden;
+                padding: 1rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+                /* Align to top instead of center */
+                align-items: center;
+                background: linear-gradient(120deg, #090017, #220a47, #4e0f8d, #006b95);
+                background-attachment: scroll;
+                background-size: cover;
+                z-index: 10;
+            }
+
+            #landingPage::before {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(120deg, #090017, #220a47, #4e0f8d, #006b95);
+                background-size: cover;
+                z-index: -1;
+            }
+
+            #landingPage .bg-black {
+                width: calc(100% - 2rem);
+                max-width: 500px;
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+
+            #landingPage>div {
+                width: 100%;
+                max-width: 500px;
+                margin-bottom: 1rem;
+            }
+
+            #landingPage button {
+                min-height: 44px;
+                min-width: 44px;
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+            /* Prevent white backdrop */
+            html,
+            body {
+                overscroll-behavior-y: none;
+                background: linear-gradient(120deg, #090017, #220a47, #4e0f8d, #006b95);
+            }
+
+
+            #historyTab {
+                background: transparent;
+            }
+
+            .history-header {
+                background: rgba(40, 40, 100, 0.8);
+                /* Darker, less transparent background */
+                backdrop-filter: blur(5px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .history-header h2 {
+                color: rgba(255, 255, 255, 0.9);
+                /* Ensure title is visible */
+            }
+
+            /* Fix for filter button */
+            .filter-button {
+                background: linear-gradient(to right, rgba(59, 130, 246, 0.7), rgba(147, 197, 253, 0.7));
+                border: 1px solid rgba(147, 197, 253, 0.5);
+                color: white;
+            }
+
+            .filter-button svg {
+                fill: rgba(255, 255, 255, 0.9);
+            }
+
+            #favoriteFilterStatus {
+                color: white;
+            }
+
+            /* Card adjustments */
+            .glass-card {
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1));
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+            }
+
+            /* Pills sizing on mobile */
+            .pill {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.875rem;
+                min-height: 2.5rem;
+                width: 100%;
+            }
+
+            /* Wizard pills adjustments */
+            #auraPillsWizard .pill,
+            #medPillsWizard .pill {
+                width: 100%;
+                height: auto;
+                min-height: 3rem;
+                font-size: 0.875rem;
+                padding: 0.5rem;
+            }
+
+            /* Photo selection grid */
+            .photo-select {
+                width: 100%;
+                height: 100px;
+            }
+
+            .log-card {
+                background: rgba(30, 30, 60, 0.7);
+                /* Darker background with less transparency */
+                backdrop-filter: blur(5px);
+            }
+
+            /* History cards */
+            .log-card-content {
+                grid-template-columns: 1fr;
+            }
+
+            .log-card-inner {
+                background: rgba(40, 40, 80, 0.8);
+                /* Even more opacity for inner content */
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .info-value,
+            .info-label,
+            .timestamp-text {
+                color: rgba(255, 255, 255, 0.9) !important;
+                /* Enforce visible text */
+            }
+
+            .log-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            /* Settings modal */
+            .glass-card.rounded-xl {
+                max-width: calc(100% - 2rem);
+                margin: 1rem;
+            }
+
+            /* Modal adjustments */
+            #editLogModal .glass-card,
+            #settingsModal .glass-card,
+            #helpModal .glass-card {
+                width: calc(100% - 2rem);
+                margin: 1rem;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+
+            /* Toast positioning */
+            #toast-container {
+                width: calc(100% - 2rem);
+                right: 1rem;
+            }
+
+            /* Navigation buttons */
+            #backHome,
+            #openSettings,
+            #openHelp {
+                position: relative;
+                top: 0;
+                left: 0;
+                margin: 0.5rem;
+            }
+
+            .log-card,
+            .process-card {
+                margin-bottom: 1rem;
+            }
+
+            /* Photos grid */
+            .photos-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+
+            .aura-photo {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 1;
+            }
+
+            #mainApp::before {
+                display: none;
+            }
+        }
+
+        /* Additional responsive improvements */
+        @media (max-width: 480px) {
+
+            /* Extra small device adjustments */
+            h1 {
+                font-size: 1.75rem !important;
+            }
+
+            h2 {
+                font-size: 1.5rem !important;
+            }
+
+            .text-xl {
+                font-size: 1.125rem !important;
+            }
+
+            /* Improve button tap targets */
+            button {
+                min-height: 44px;
+            }
+
+            /* Adjust modal content */
+            .modal-content {
+                padding: 1rem;
+            }
+
+            /* Make form inputs more touch-friendly */
+            input,
+            select,
+            textarea {
+                min-height: 44px;
+                font-size: 16px;
+                /* Prevents iOS zoom on focus */
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <div id="toast-container"></div>
+
+    <!-- Landing Page -->
+    <div id="landingPage" class="min-h-screen flex flex-col items-center justify-center p-4 space-y-10">
+        <!-- Instant Log Section -->
+        <div class="bg-black bg-opacity-70 p-10 rounded-xl shadow-2xl max-w-3xl w-full text-center relative">
+            <!-- Settings Icon -->
+            <button id="openSettingsLanding" class="absolute top-4 right-4 focus:outline-none max-sm:hidden"
+                title="Settings">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-300 hover:text-blue-400" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11.049 2.927c.3-.921 1.603-.921 1.902 0a1.724 1.724 0 002.573 1.066c.788-.57 1.87.163 1.54 1.043a1.724 1.724 0 001.066 2.573c.921.3.921 1.603 0 1.902a1.724 1.724 0 00-1.066 2.573c.33.88-.752 1.613-1.54 1.043a1.724 1.724 0 00-2.573 1.066c-.3.921-1.603.921-1.902 0a1.724 1.724 0 00-2.573-1.066c-.788.57-1.87-.163-1.54-1.043a1.724 1.724 0 00-1.066-2.573c-.921-.3-.921-1.603 0-1.902a1.724 1.724 0 001.066-2.573c-.33-.88.752-1.613 1.54-1.043.986.714 2.44.337 2.573-1.066z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </button>
+            <!-- Help Icon -->
+            <button id="openHelpLanding" class="absolute top-4 left-4 focus:outline-none" title="Help">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-300 hover:text-blue-400" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 15h.01M12 7a3 3 0 013 3c0 1.5-1 2.5-2 3l-1 1" />
+                </svg>
+            </button>
+            <h1 class="text-5xl font-extrabold text-white mb-4">Instant Log</h1>
+            <p class="text-l text-gray-200 mb-8">One click records the current date & time of your migraine episode. Add
+                details later.</p>
+            <button onclick="logQuickEpisode()"
+                class="w-full md:w-auto h-20 bg-[#383885] hover:bg-blue-700 text-3xl font-bold rounded-lg shadow-xl px-8 py-4 focus:outline-none focus:ring-1 focus:ring-blue-200 text-white">
+                Instant Log
+            </button>
+        </div>
+        <!-- Process Overview Section -->
+        <div class="bg-black bg-opacity-70 p-8 rounded-xl shadow-2xl max-w-3xl w-full">
+            <h2 class="text-3xl font-bold text-white mb-6">How It Works</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Default Meds Card -->
+                <div onclick="document.getElementById('settingsModal').classList.remove('hidden')"
+                    class="process-card bg-glass-midnight/40 backdrop-blur-lg border border-white/5 p-4 rounded-lg hover:bg-glass-midnight/50 hover:scale-[103%] transition-all duration-300 shadow-xl">
+                    <h3 class="text-xl font-semibold text-white bg-green-500 rounded p-1 mb-2 set-meds-btn">Set Default
+                        Meds</h3>
+                    <p class="text-sm text-gray-300">
+                        Set your default medicine cocktail for use with the Instant Log button.
+                    </p>
+                </div>
+                <!-- Advanced Log Card -->
+                <div onclick="startAdvancedLog()"
+                    class="process-card bg-glass-navy/40 backdrop-blur-lg border border-white/5 p-4 rounded-lg hover:bg-glass-navy/50 hover:scale-[103%] transition-all duration-300 shadow-xl">
+                    <h3 class="text-xl font-semibold text-white bg-red-500 rounded p-1 mb-2 advanced-log-btn">Advanced
+                        Log</h3>
+                    <p class="text-sm text-gray-300">
+                        Log detailed information including aura types, medications, and more for comprehensive records.
+                    </p>
+                </div>
+
+                <!-- History Card -->
+                <div onclick="startHistory()"
+                    class="process-card bg-glass-purple/35 backdrop-blur-lg border border-white/5 p-4 rounded-lg hover:bg-glass-purple/45 hover:scale-[103%] transition-all duration-300 shadow-xl">
+                    <h3 class="text-xl font-semibold text-white bg-purple-500 rounded p-1 mb-2 history-btn">History</h3>
+                    <p class="text-sm text-gray-300">
+                        View and filter past logs to track patterns, triggers and medication results over time.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Main Application (initially hidden) -->
+    <div id="mainApp" class="min-h-screen text-white flex items-center justify-center p-4">
+        <div class="max-w-4xl w-full glass-card rounded-xl shadow-xl p-6 flex flex-col relative">
+            <!-- Back to Home Button -->
+            <button id="backHome"
+                class="absolute top-4 left-4 bg-[#625da1] text-white max-sm:max-w-[70px] max-md:max-w-[70px] px-3 py-1 rounded focus:outline-none"
+                onclick="goHome()">Home</button>
+            <!-- Settings Icon -->
+            <button id="openSettings" class="absolute top-4 right-4 focus:outline-none max-sm:hidden" title="Settings">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-300 hover:text-blue-400" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11.049 2.927c.3-.921 1.603-.921 1.902 0a1.724 1.724 0 002.573 1.066c.788-.57 1.87.163 1.54 1.043a1.724 1.724 0 001.066 2.573c.921.3.921 1.603 0 1.902a1.724 1.724 0 00-1.066 2.573c.33.88-.752 1.613-1.54 1.043a1.724 1.724 0 00-2.573 1.066c-.3.921-1.603.921-1.902 0a1.724 1.724 0 00-2.573-1.066c-.788.57-1.87-.163-1.54-1.043a1.724 1.724 0 00-1.066-2.573c-.921-.3-.921-1.603 0-1.902a1.724 1.724 0 001.066-2.573c-.33-.88.752-1.613 1.54-1.043.986.714 2.44.337 2.573-1.066z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </button>
+            <!-- Help Icon -->
+            <button id="openHelp" class="absolute top-4 left-4 focus:outline-none" title="Help">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-300 hover:text-blue-400" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 15h.01M12 7a3 3 0 013 3c0 1.5-1 2.5-2 3l-1 1" />
+                </svg>
+            </button>
+            <h1 class="text-3xl font-extrabold text-center mb-4 mt-10 max-sm:hidden">Quick Track v6</h1>
+            <!-- Tabs Navigation -->
+            <div class="flex justify-center gap-4 mb-6 border-b border-white/20">
+                <button class="tab-btn active max-sm:hidden" data-target="advancedTab"
+                    onclick="activateTab('advancedTab')">Advanced</button>
+                <button class="tab-btn inactive max-sm:hidden" data-target="historyTab"
+                    onclick="activateTab('historyTab')">History</button>
+            </div>
+            <!-- Advanced Log Wizard -->
+            <div id="advancedTab" class="tab-content">
+                <div id="advancedWizardTemplate">
+                    <!-- Wizard Step 1: Date/Time & Aura Selection -->
+                    <div id="wizardStep1" class="wizard-step">
+                        <h2 class="text-2xl font-bold mb-4">Step 1: Select Aura Type</h2>
+                        <div class="mb-6">
+                            <label for="dateTime" class="block mb-2 text-lg font-medium">Date/Time</label>
+                            <input id="dateTime" type="datetime-local"
+                                class="w-full p-3 rounded-md bg-white/20 border-none outline-none" />
+                        </div>
+                        <p class="mb-4 text-lg text-gray-300">Please select the aura type(s) you experienced:</p>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 justify-items-center" id="auraPillsWizard">
+                            <button type="button" class="pill" data-aura="Flashing Lights">Flashing
+                                Lights</button>
+                            <button type="button" class="pill" data-aura="Zigzag Patterns">Zigzag Patterns</button>
+                            <button type="button" class="pill" data-aura="Blind Spots">Blind Spots</button>
+                            <button type="button" class="pill" data-aura="Tunnel Vision">Tunnel Vision</button>
+                            <button type="button" class="pill" data-aura="Double Vision">Double Vision</button>
+                            <button type="button" class="pill" data-aura="Numbness">Numbness</button>
+                            <button type="button" class="pill" data-aura="Tingling">Tingling</button>
+                            <button type="button" class="pill" data-aura="Shakes / Tremors">Shakes / Tremors</button>
+                            <button type="button" class="pill" data-aura="Weakness">Weakness</button>
+                            <button type="button" class="pill" data-aura="Vertigo">Vertigo</button>
+                            <button type="button" class="pill" data-aura="Speech">Speech Issues</button>
+                            <button type="button" class="pill" data-aura="Other">Other</button>
+                        </div>
+                        <div class="mt-6">
+                            <button id="wizardNextStep"
+                                class="px-6 py-3 w-full rounded-md bg-[#6129ab] hover:bg-[#6129ab70] text-lg font-semibold"
+                                onclick="goToWizardStep2()">Next</button>
+                        </div>
+                    </div>
+                    <!-- Wizard Step 2: Medication Selection -->
+                    <div id="wizardStep2" class="wizard-step hidden">
+                        <h2 class="text-2xl font-bold mb-4">Step 2: Select Medications</h2>
+                        <p class="mb-4 text-lg text-gray-300">Please select the medication(s) you took:</p>
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 justify-items-center" id="medPillsWizard">
+                            <button type="button" class="pill" data-med="Ibuprofen">Ibuprofen</button>
+                            <button type="button" class="pill" data-med="Acetaminophen">Acetaminophen</button>
+                            <button type="button" class="pill" data-med="Aspirin">Aspirin</button>
+                            <button type="button" class="pill" data-med="Naproxen">Naproxen</button>
+                            <button type="button" class="pill" data-med="Ubrelvy">Ubrelvy</button>
+                            <button type="button" class="pill" data-med="Nurtec">Nurtec</button>
+                            <button type="button" class="pill" data-med="Imitrex">Imitrex</button>
+                            <button type="button" class="pill" data-med="Ergotamines">Ergotamines</button>
+                            <button type="button" class="pill" data-med="Gepants">Gepants</button>
+                            <button type="button" class="pill" data-med="Beta Blockers">Beta Blockers</button>
+                            <button type="button" class="pill" data-med="Other">Other</button>
+                            <button type="button" class="pill" data-med="None">None</button>
+                        </div>
+                        <div class="mt-6">
+                            <button id="wizardNextStepFromMed"
+                                class="px-6 py-3 w-full rounded-md bg-[#6129ab] hover:bg-[#6129ab70] text-lg font-semibold"
+                                onclick="goToWizardStep3()">Next</button>
+                        </div>
+                        <div class="mt-4">
+                            <button id="wizardBack"
+                                class="px-6 py-3 w-full rounded-md bg-[#303078] hover:bg-[#30307870] text-lg font-semibold"
+                                onclick="goToWizardStep1()">Back</button>
+                        </div>
+                    </div>
+                    <!-- Wizard Step 3: Photo Selection -->
+                    <div id="wizardStep3" class="wizard-step hidden">
+                        <h2 class="text-2xl font-bold mb-4">Step 3: Select Visual Aura Photo(s)</h2>
+                        <p class="mb-4 text-lg text-gray-300">Please select one or more photos that best represent your
+                            visual aura:</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 justify-items-center" id="photoSelection">
+                            <div class="photo-select" data-photo="img/aura1.jpg">
+                                <img src="img/aura1.jpg" alt="Aura 1" title="Bright aura with scintillating scotoma">
+                            </div>
+                            <div class="photo-select" data-photo="img/aura2.jpg">
+                                <img src="img/aura2.jpg" alt="Aura 2"
+                                    title="Blurry crescent shaped blind spot, little scotoma">
+                            </div>
+                            <div class="photo-select" data-photo="img/aura3.jpg">
+                                <img src="img/aura3.jpg" alt="Aura 3"
+                                    title="Large bright flashes or stationary 'light'">
+                            </div>
+                            <div class="photo-select" data-photo="img/aura4.jpg">
+                                <img src="img/aura4.jpg" alt="Aura 4"
+                                    title="'Electric', jagged, rainbow scotoma that shimmers quickly">
+                            </div>
+                            <div class="photo-select" data-photo="img/aura5.jpg">
+                                <img src="img/aura5.jpg" alt="Aura 5"
+                                    title="Broken glass like ring shaped aura, slight shimmering">
+                            </div>
+                            <div class="photo-select" data-photo="img/aura6.jpg">
+                                <img src="img/aura6.jpg" alt="Aura 6" title="Overall blury vision, no scotoma">
+                            </div>
+                            <div class="photo-select" data-photo="img/aura7.jpg">
+                                <img src="img/aura7.jpg" alt="Aura 7"
+                                    title="Jagged and wide rainbow scotoma, shimmering quickly">
+                            </div>
+                            <div class="photo-select" data-photo="img/aura8.jpg">
+                                <img src="img/aura8.jpg" alt="Aura 8" title="Shimmering patch of rainbow colored light">
+                            </div>
+                            <div class="photo-select" data-photo="img/aura9.jpg">
+                                <img src="img/aura9.jpg" alt="Aura 9" title="Black and white shimmering scotoma">
+                            </div>
+                            <div class="photo-select" data-photo="img/aura10.jpg">
+                                <img src="img/aura10.jpg" alt="Aura 10"
+                                    title="Geometric shimmering shape, almost invisible besides shimmering">
+                            </div>
+                            <div class="photo-select" data-photo="img/aura11.jpg">
+                                <img src="img/aura11.jpg" alt="Aura 11"
+                                    title="Blurry shimmering dot, expanding outwards towards peripheral vision">
+                            </div>
+                            <div class="photo-select" data-photo="img/aura12.jpg">
+                                <img src="img/aura12.jpg" alt="Aura 12"
+                                    title="Drunk-like blurry vision, shimmering across entire field of view">
+                            </div>
+                        </div>
+                        <div class="mt-6">
+                            <button id="wizardSubmit"
+                                class="px-6 py-3 w-full rounded-md bg-[#9054d1] hover:bg-[#9054d150] text-lg font-semibold"
+                                onclick="submitAdvancedLog()">Submit Log</button>
+                        </div>
+                        <div class="mt-4">
+                            <button id="wizardBackFromPhotos"
+                                class="px-6 py-3 w-full rounded-md bg-[#303078] hover:bg-[#30307870] text-lg font-semibold"
+                                onclick="goToWizardStep2()">Back</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="historyTab" class="hidden tab-content">
+                <div class="history-container">
+                    <div class="history-header">
+                        <h2 class="text-2xl font-bold">History</h2>
+                        <button class="filter-button max-sm:p-[4px] max-sm:ml-[20px]" onclick="toggleFavoriteFilter()"
+                            id="favoriteFilterButton">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 max-sm:h-3 max-sm:w-3" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                            </svg>
+                            <span class="max-md:visible max-sm:text-[8px]">Filter Favorites</span>
+                            <span id="favoriteFilterStatus" class="ml-2 text-sm max-sm:hidden">Off</span>
+                        </button>
+                    </div>
+                    <div id="logHistory" class="space-y-4">
+                        <!-- Log entries render here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Main Application -->
+
+    <!-- Photo Preview Modal -->
+    <div id="photoModal" class="fixed inset-0 flex items-center justify-center hidden z-50">
+        <div class="absolute inset-0 modal-backdrop" onclick="closePhotoModal()"></div>
+        <div class="relative bg-[#b2a7d1] p-4 rounded-xl shadow-lg z-10">
+            <img id="photoModalImg" src="" alt="Photo Preview" class="max-w-full max-h-screen rounded-xl">
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="fixed inset-0 flex items-center justify-center hidden" style="z-index: 2000;">
+        <div class="absolute inset-0 modal-backdrop"></div>
+        <div class="relative glass-card rounded-xl p-6 max-w-sm w-full">
+            <h2 class="text-2xl font-bold mb-4 text-whit text-center">Default Medication(s)</h2>
+            <p></p>
+            <div class="mb-4">
+                <label for="defaultPain" class="block mb- text-white hidden">Default Pain Intensity (1-10)</label>
+                <!--HIDDEN CLASS TO PRESERVE FUNCTIONALITY-->
+                <input id="defaultPain" type="range" min="1" max="10" value="5" class="w-full hidden">
+                <!--HIDDEN CLASS TO PRESERVE FUNCTIONALITY-->
+                <p id="defaultPainValue" class="text-center mt-1 text-white hidden">5</p>
+                <!--HIDDEN CLASS TO PRESERVE FUNCTIONALITY-->
+            </div>
+            <div class="mb-4">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded bg-orange-700"></div>
+                        <span class="text-sm text-white">Pain Relief</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded bg-blue-500"></div>
+                        <span class="text-sm text-white">Prescription</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded bg-teal-400"></div>
+                        <span class="text-sm text-white">Preventative</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded bg-purple-500"></div>
+                        <span class="text-sm text-white">Supplements</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded bg-amber-500"></div>
+                        <span class="text-sm text-white">Other</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-1" id="defaultMedPills">
+                    <!-- Pain Relievers / NSAIDs -->
+                    <span class="pill pain-relief bg-orange-700" data-med="Ibuprofen">Ibuprofen</span>
+                    <span class="pill pain-relief bg-orange-700" data-med="Acetaminophen">Acetaminophen</span>
+                    <span class="pill pain-relief bg-orange-700" data-med="Aspirin">Aspirin</span>
+                    <span class="pill pain-relief bg-orange-700" data-med="Naproxen">Naproxen</span>
+                    <span class="pill pain-relief bg-orange-700" data-med="Excedrin Migraine">Excedrin
+                        Migraine</span>
+
+                    <!-- Prescription Acute Treatments -->
+                    <span class="pill prescription bg-blue-500" data-med="Imitrex">Imitrex (Sumatriptan)</span>
+                    <span class="pill prescription bg-blue-500" data-med="Maxalt">Maxalt (Rizatriptan)</span>
+                    <span class="pill prescription bg-blue-500" data-med="Zomig">Zomig (Zolmitriptan)</span>
+                    <span class="pill prescription bg-blue-500" data-med="Ubrelvy">Ubrelvy</span>
+                    <span class="pill prescription bg-blue-500" data-med="Nurtec">Nurtec</span>
+                    <span class="pill prescription bg-blue-500" data-med="Qulipta">Qulipta</span>
+
+                    <!-- Preventative Medications -->
+                    <span class="pill preventative bg-teal-400" data-med="Propranolol">Propranolol</span>
+                    <span class="pill preventative bg-teal-400" data-med="Topiramate">Topiramate</span>
+                    <span class="pill preventative bg-teal-400" data-med="Beta Blockers">Beta Blockers</span>
+                    <span class="pill preventative bg-teal-400" data-med="CGRP Inhibitors">CGRP Inhibitors</span>
+                    <span class="pill preventative bg-teal-400" data-med="Botox">Botox</span>
+                    <span class="pill preventative bg-teal-400" data-med="Amitriptyline">Amitriptyline</span>
+
+                    <!-- Supplements -->
+                    <span class="pill supplement bg-purple-500" data-med="Magnesium">Magnesium</span>
+                    <span class="pill supplement bg-purple-500" data-med="Vitamin B2">Vitamin B2</span>
+                    <span class="pill supplement bg-purple-500" data-med="CoQ10">CoQ10</span>
+                    <span class="pill supplement bg-purple-500" data-med="Butterbur">Butterbur</span>
+                    <span class="pill supplement bg-purple-500" data-med="Feverfew">Feverfew</span>
+
+                    <!-- Other Medications -->
+                    <span class="pill other bg-amber-500" data-med="Ergotamines">Ergotamines</span>
+                    <span class="pill other bg-amber-500" data-med="DHE">DHE</span>
+                    <span class="pill other bg-amber-500" data-med="Fioricet">Fioricet</span>
+                    <span class="pill other bg-amber-500" data-med="Reglan">Reglan</span>
+                    <span class="pill n-a" data-med="Other">Other</span>
+                    <span class="pill none" data-med="None">None</span>
+                </div>
+            </div>
+            <div class="flex justify-end gap-2">
+                <button class="px-4 py-2 rounded-md bg-gray-600 hover:bg-gray-500 text-sm text-white"
+                    onclick="closeSettings()">Cancel</button>
+                <button class="px-4 py-2 rounded-md bg-[#8c50cc] hover:bg-[#8c50cc70] text-sm text-white font-semibold"
+                    onclick="saveDefaultSettings()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="fixed inset-0 flex items-center justify-center hidden" style="z-index: 2000;">
+        <div class="absolute inset-0 modal-backdrop"></div>
+        <div class="relative glass-card rounded-xl p-6 max-w-sm w-full">
+            <h2 class="text-2xl font-bold mb-4 text-white">How to use Quick Track:</h2>
+            <hr class="mb-4">
+            <div class="mb-4">
+                <!--Default meds explaination-->
+                <p class="text-white"><span class="text-white bg-gray-500 p-1.5 rounded shadow-md"> Set Default
+                        Meds</span>
+                    is where you will set your default medication cocktail. This information will
+                    be recorded along with the time and date when instant log is clicked.</p>
+                <br>
+                <!--Instant log explaination-->
+                <p class="text-white"><span class="text-white bg-gray-500 p-1.5 rounded shadow-md">Instant
+                        Log</span> allows you to
+                    instantly
+                    log the time and
+                    date of
+                    your migraine
+                    episode with a single tap. Once your episode is over, you can add fields like "Pain", "Aura
+                    duration", and more.</p>
+                <br>
+                <!--Advanced log tab explaination-->
+                <p class="text-white"><span class="text-white bg-gray-500 p-1.5 rounded shadow-md">Advanced
+                        Log</span> allows you to log your migraine episode in great detail, including which medications
+                    you take, aura symptoms, and more.</p>
+                <br>
+                <!--History tab explaination-->
+                <p class="text-white"><span class="text-white bg-gray-500 p-1.5 rounded shadow-md">History</span> is
+                    where
+                    you'll view all of your episodes. From this page, you can view, edit or favorite your migraine
+                    episodes for later.</p>
+            </div>
+            <div class="flex justify-end gap-2">
+                <button class="px-4 py-2 rounded-md bg-[#8c50cc] hover:bg-[#8c50cc70] text-sm text-white"
+                    onclick="closeHelp()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Log Modal -->
+    <!-- Edit Log Modal -->
+    <div id="editLogModal" class="fixed inset-0 flex items-center justify-center hidden z-50">
+        <div class="absolute inset-0 modal-backdrop"></div>
+        <div class="relative glass-card rounded-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <h2 class="text-2xl font-bold mb-4 text-white">Edit Log Entry</h2>
+
+            <!-- Basic Info Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label for="painInput" class="block mb-1 text-white">Pain (1-10)</label>
+                    <input id="painInput" type="number" min="1" max="10"
+                        class="w-full p-2 rounded-md bg-white/20 border-none outline-none">
+                </div>
+                <div>
+                    <label for="auraDurationInput" class="block mb-1 text-white">Aura Duration (minutes)</label>
+                    <input id="auraDurationInput" type="number" min="0"
+                        class="w-full p-2 rounded-md bg-white/20 border-none outline-none">
+                </div>
+                <div class="md:col-span-2">
+                    <label for="triggersInput" class="block mb-1 text-white">Triggers (comma separated)</label>
+                    <input id="triggersInput" type="text"
+                        class="w-full p-2 rounded-md bg-white/20 border-none outline-none">
+                </div>
+                <div class="md:col-span-2">
+                    <label for="auraDescriptionInput" class="block mb-1 text-white">Aura Description</label>
+                    <textarea id="auraDescriptionInput" rows="3"
+                        class="w-full p-2 rounded-md bg-white/20 border-none outline-none"></textarea>
+                </div>
+                <div class="flex items-center">
+                    <input id="auraHeadacheInput" type="checkbox" class="form-checkbox text-blue-600">
+                    <label for="auraHeadacheInput" class="ml-2 text-white">Aura followed by headache?</label>
+                </div>
+            </div>
+
+            <!-- Photo Selection Section -->
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold mb-3 text-white">Visual Aura Photos</h3>
+                <p class="text-sm text-gray-300 mb-4">Select photos that represent your visual aura:</p>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="editPhotoSelection">
+                    <div class="photo-select" data-photo="img/aura1.jpg">
+                        <img src="img/aura1.jpg" alt="Aura 1" title="Bright aura with scintillating scotoma">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura2.jpg">
+                        <img src="img/aura2.jpg" alt="Aura 2" title="Blurry crescent shaped blind spot, little scotoma">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura3.jpg">
+                        <img src="img/aura3.jpg" alt="Aura 3" title="Large bright flashes or stationary 'light'">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura4.jpg">
+                        <img src="img/aura4.jpg" alt="Aura 4"
+                            title="'Electric', jagged, rainbow scotoma that shimmers quickly">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura5.jpg">
+                        <img src="img/aura5.jpg" alt="Aura 5"
+                            title="Broken glass like ring shaped aura, slight shimmering">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura6.jpg">
+                        <img src="img/aura6.jpg" alt="Aura 6" title="Overall blury vision, no scotoma">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura7.jpg">
+                        <img src="img/aura7.jpg" alt="Aura 7"
+                            title="Jagged and wide rainbow scotoma, shimmering quickly">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura8.jpg">
+                        <img src="img/aura8.jpg" alt="Aura 8" title="Shimmering patch of rainbow colored light">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura9.jpg">
+                        <img src="img/aura9.jpg" alt="Aura 9" title="Black and white shimmering scotoma">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura10.jpg">
+                        <img src="img/aura10.jpg" alt="Aura 10"
+                            title="Geometric shimmering shape, almost invisible besides shimmering">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura11.jpg">
+                        <img src="img/aura11.jpg" alt="Aura 11"
+                            title="Blurry shimmering dot, expanding outwards towards peripheral vision">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura12.jpg">
+                        <img src="img/aura12.jpg" alt="Aura 12"
+                            title="Drunk-like blurry vision, shimmering across entire field of view">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-end gap-2 mt-4">
+                <button id="cancelEditLog" class="px-4 py-2 rounded-md bg-gray-600 hover:bg-gray-500 text-white"
+                    onclick="closeEditLogModal()">Cancel</button>
+                <button id="saveEditLog" class="px-4 py-2 rounded-md bg-[#8c50cc] hover:bg-[#8c50cc70] text-white"
+                    onclick="saveEditedLog()">Save</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Toast Notification Function
+        function showToast(message) {
+            const container = document.getElementById("toast-container");
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            toast.innerText = message;
+
+            // Remove any existing toasts
+            while (container.firstChild) {
+                container.firstChild.remove();
+            }
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Global log storage and configuration
+        let logEntries = [];
+        let nextLogId = 1;
+        let defaultPain = 5;
+        let defaultMed = ["None"];
+        let selectedDefaultMed = [];
+        let currentEditingLogId = null;
+        let wizardAuraSelections = [];
+        let wizardMedSelections = [];
+        let wizardPhotoSelections = [];
+        let editModalPhotoSelections = [];
+        let favoriteFilter = false;
+
+        // Helper function to activate a tab
+        function activateTab(tabId) {
+            document.querySelectorAll(".tab-btn").forEach(btn => {
+                btn.classList.remove("active");
+                btn.classList.add("inactive");
+            });
+            let tabButton = document.querySelector(`[data-target="${tabId}"]`);
+            tabButton.classList.add("active");
+            tabButton.classList.remove("inactive");
+            document.querySelectorAll(".tab-content").forEach(tc => tc.classList.add("hidden"));
+            document.getElementById(tabId).classList.remove("hidden");
+            if (tabId === "advancedTab" && document.getElementById("wizardStep1")) {
+                activateWizardStep(1);
+            }
+        }
+
+        // Landing page functions
+        function logQuickEpisode() {
+            const dt = new Date().toLocaleString();
+            const logEntry = {
+                id: nextLogId++,
+                time: dt,
+                meds: defaultMed.join(", "),
+                quick: true,
+                aura: "Aura logged.",
+                pain: "Not set",
+                auraDuration: "Not set",
+                triggers: "Not set",
+                auraDescription: "Not set",
+                auraHeadache: "Not set",
+                photos: [],
+                favorite: false
+            };
+            addLogEntry(logEntry);
+            updateChart(0, false);
+            showToast("Instant log saved with current date & time. Add details later.");
+        }
+
+        function startAdvancedLog() {
+            document.getElementById('landingPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.add('visible');
+            document.getElementById('advancedTab').innerHTML = document.getElementById('advancedWizardTemplate').innerHTML;
+            activateWizardStep(1);
+            activateTab('advancedTab');
+            document.getElementById("openHelp").classList.add("hidden");
+        }
+
+        function startHistory() {
+            document.getElementById('landingPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.add('visible');
+            activateTab('historyTab');
+            renderHistory();
+        }
+
+        function goHome() {
+            document.getElementById('mainApp').classList.remove('visible');
+            document.getElementById('landingPage').classList.remove('hidden');
+        }
+
+        // Settings modal functions
+        document.getElementById("openSettings").addEventListener("click", () => {
+            document.getElementById("settingsModal").classList.remove("hidden");
+        });
+        document.getElementById("openSettingsLanding").addEventListener("click", () => {
+            document.getElementById("settingsModal").classList.remove("hidden");
+        });
+
+        function closeSettings() {
+            document.getElementById("settingsModal").classList.add("hidden");
+        }
+
+        function saveDefaultSettings() {
+            const painInput = document.getElementById("defaultPain").value;
+            defaultPain = painInput ? painInput : 5;
+            defaultMed = selectedDefaultMed.length > 0 ? selectedDefaultMed : ["None"];
+            document.getElementById("defaultPainValue").textContent = defaultPain;
+            showToast("Default settings saved!");
+            closeSettings();
+        }
+
+        document.getElementById("defaultPain").addEventListener("input", (e) => {
+            document.getElementById("defaultPainValue").textContent = e.target.value;
+        });
+
+        // Initialize default med pills
+        document.addEventListener("DOMContentLoaded", function () {
+            const defaultMedPills = document.querySelectorAll("#defaultMedPills .pill");
+            defaultMedPills.forEach(pill => {
+                pill.addEventListener("click", () => {
+                    if (pill.classList.contains("selected")) {
+                        pill.classList.remove("selected");
+                        selectedDefaultMed = selectedDefaultMed.filter(m => m !== pill.dataset.med);
+                    } else {
+                        pill.classList.add("selected");
+                        selectedDefaultMed.push(pill.dataset.med);
+                    }
+                });
+            });
+        });
+
+        // Help modal functions
+        document.getElementById("openHelp").addEventListener("click", () => {
+            document.getElementById("helpModal").classList.remove("hidden");
+        });
+        document.getElementById("openHelpLanding").addEventListener("click", () => {
+            document.getElementById("helpModal").classList.remove("hidden");
+        });
+
+        function closeHelp() {
+            document.getElementById("helpModal").classList.add("hidden");
+        }
+
+        // Advanced Log Wizard Functions
+        document.addEventListener("click", function (e) {
+            if (e.target.matches("#auraPillsWizard .pill")) {
+                e.target.classList.toggle("selected");
+                updateWizardAuraSelections();
+            }
+            if (e.target.matches("#medPillsWizard .pill")) {
+                e.target.classList.toggle("selected");
+                updateWizardMedSelections();
+            }
+            const photoEl = e.target.closest(".photo-select");
+            if (photoEl) {
+                if (photoEl.parentElement.id === "photoSelection") {
+                    photoEl.classList.toggle("selected");
+                    updateWizardPhotoSelections();
+                } else if (photoEl.parentElement.id === "editPhotoSelection") {
+                    photoEl.classList.toggle("selected");
+                    updateEditModalPhotoSelections();
+                }
+            }
+        });
+
+        function updateWizardAuraSelections() {
+            wizardAuraSelections = [];
+            const auraButtons = document.querySelectorAll("#auraPillsWizard .pill");
+            auraButtons.forEach(btn => {
+                if (btn.classList.contains("selected")) {
+                    wizardAuraSelections.push(btn.dataset.aura);
+                }
+            });
+        }
+
+        function updateWizardMedSelections() {
+            wizardMedSelections = [];
+            const medButtons = document.querySelectorAll("#medPillsWizard .pill");
+            medButtons.forEach(btn => {
+                if (btn.classList.contains("selected")) {
+                    wizardMedSelections.push(btn.dataset.med);
+                }
+            });
+        }
+
+        function updateWizardPhotoSelections() {
+            wizardPhotoSelections = [];
+            const photoButtons = document.querySelectorAll("#photoSelection .photo-select.selected");
+            photoButtons.forEach(btn => {
+                wizardPhotoSelections.push(btn.getAttribute("data-photo"));
+            });
+        }
+
+        function updateEditModalPhotoSelections() {
+            editModalPhotoSelections = [];
+            const photoButtons = document.querySelectorAll("#editPhotoSelection .photo-select.selected");
+            photoButtons.forEach(btn => {
+                editModalPhotoSelections.push(btn.getAttribute("data-photo"));
+            });
+        }
+
+        function activateWizardStep(step) {
+            if (step === 1) {
+                document.getElementById("wizardStep1").classList.remove("hidden");
+                if (document.getElementById("wizardStep2")) document.getElementById("wizardStep2").classList.add("hidden");
+                if (document.getElementById("wizardStep3")) document.getElementById("wizardStep3").classList.add("hidden");
+            } else if (step === 2) {
+                document.getElementById("wizardStep1").classList.add("hidden");
+                document.getElementById("wizardStep2").classList.remove("hidden");
+                if (document.getElementById("wizardStep3")) document.getElementById("wizardStep3").classList.add("hidden");
+            } else if (step === 3) {
+                document.getElementById("wizardStep1").classList.add("hidden");
+                document.getElementById("wizardStep2").classList.add("hidden");
+                document.getElementById("wizardStep3").classList.remove("hidden");
+            }
+        }
+
+        function goToWizardStep2() {
+            updateWizardAuraSelections();
+            if (wizardAuraSelections.length === 0) {
+                alert("Please select at least one aura type.");
+                return;
+            }
+            activateWizardStep(2);
+        }
+
+        function goToWizardStep1() {
+            activateWizardStep(1);
+        }
+
+        function goToWizardStep3() {
+            updateWizardPhotoSelections();
+            activateWizardStep(3);
+        }
+
+        function submitAdvancedLog() {
+            updateWizardMedSelections();
+            updateWizardPhotoSelections();
+            const dtValue = document.getElementById("dateTime").value;
+            const dt = dtValue ? new Date(dtValue).toLocaleString() : new Date().toLocaleString();
+            const auraInfo = wizardAuraSelections.length ? `Aura: [${wizardAuraSelections.join(", ")}]` : "No aura selected";
+            const meds = wizardMedSelections.length ? wizardMedSelections.join(", ") : "No meds";
+            const logEntry = {
+                id: nextLogId++,
+                time: dt,
+                aura: auraInfo,
+                meds: meds,
+                quick: false,
+                pain: "Not set",
+                auraDuration: "Not set",
+                triggers: "Not set",
+                auraDescription: "Not set",
+                auraHeadache: "Not set",
+                photos: wizardPhotoSelections,
+                favorite: false
+            };
+            addLogEntry(logEntry);
+            updateChart(0, false);
+            showToast("Advanced log saved!");
+            wizardAuraSelections = [];
+            wizardMedSelections = [];
+            wizardPhotoSelections = [];
+            document.querySelectorAll("#auraPillsWizard .pill").forEach(btn => btn.classList.remove("selected"));
+            document.querySelectorAll("#medPillsWizard .pill").forEach(btn => btn.classList.remove("selected"));
+            document.querySelectorAll("#photoSelection .photo-select").forEach(btn => btn.classList.remove("selected"));
+            goHome();
+        }// History and Favorites Functions
+        function createLogCard(entry) {
+            let card = document.createElement("div");
+            card.className = `log-card ${entry.quick ? 'quick' : 'advanced'}`;
+            card.setAttribute("data-log-id", entry.id);
+
+            let cardContent = `
+    <div class="log-card-inner">
+      <div class="log-card-header">
+        <div class="log-timestamp">
+          <svg class="timestamp-icon h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span class="timestamp-text">${entry.time}</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="toggleFavorite(${entry.id})" class="favorite-btn ${entry.favorite ? 'active' : ''}">
+            ${entry.favorite ?
+                    `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.447a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.37 2.447c-.784.57-1.84-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.642 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z"/>
+              </svg>` :
+                    `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.447a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.37 2.447c-.784.57-1.84-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.642 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z"/>
+              </svg>`
+                }
+          </button>
+        </div>
+      </div>
+
+      <div class="log-card-content">`;
+
+            // Primary Information
+            if (entry.quick) {
+                cardContent += `
+      <div class="info-group">
+        <div class="info-label">Default Medications</div>
+        <div class="info-value">${entry.meds}</div>
+      </div>`;
+            } else {
+                cardContent += `
+      <div class="info-group">
+        <div class="info-label">Medications</div>
+        <div class="info-value">${entry.meds}</div>
+      </div>
+      <div class="info-group">
+        <div class="info-label">Aura Types</div>
+        <div class="info-value">${entry.aura}</div>
+      </div>`;
+            }
+
+            // Pain and Duration
+            if (entry.pain && entry.pain !== "Not set") {
+                cardContent += `
+      <div class="info-group">
+        <div class="info-label">Pain Level</div>
+        <div class="info-value">${entry.pain}</div>
+      </div>`;
+            }
+
+            if (entry.auraDuration && entry.auraDuration !== "Not set") {
+                cardContent += `
+      <div class="info-group">
+        <div class="info-label">Aura Duration</div>
+        <div class="info-value">${entry.auraDuration}</div>
+      </div>`;
+            }
+
+            // Aura Headache Status
+            if (entry.auraHeadache && entry.auraHeadache !== "Not set") {
+                cardContent += `
+      <div class="info-group">
+        <div class="info-label">Aura Followed by Headache</div>
+        <div class="info-value">${entry.auraHeadache}</div>
+      </div>`;
+            }
+
+            // Triggers
+            if (entry.triggers && entry.triggers !== "Not set") {
+                cardContent += `
+      <div class="info-group full-width">
+        <div class="info-label">Triggers</div>
+        <div class="info-value">${entry.triggers}</div>
+      </div>`;
+            }
+
+            // Aura Description
+            if (entry.auraDescription && entry.auraDescription !== "Not set") {
+                cardContent += `
+      <div class="info-group full-width">
+        <div class="info-label">Aura Description</div>
+        <div class="info-value">${entry.auraDescription}</div>
+      </div>`;
+            }
+
+            // Photos
+            if (entry.photos && entry.photos.length > 0) {
+                cardContent += `
+      <div class="photos-section">
+        <div class="info-label">Aura Photos</div>
+        <div class="photos-grid">
+          ${entry.photos.map(photoUrl => `
+            <img src="${photoUrl}" alt="Aura Photo" class="aura-photo cursor-pointer" 
+              onclick="openPhotoModal('${photoUrl}')">
+          `).join('')}
+        </div>
+      </div>`;
+            }
+
+            // Actions
+            cardContent += `
+      </div>
+      <div class="card-actions">
+        <button class="action-btn edit" onclick="openEditLogModal(${entry.id})">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+          </svg>
+          Edit Details
+        </button>
+      </div>
+    </div>`;
+
+            card.innerHTML = cardContent;
+            return card;
+        }
+
+        function renderHistory() {
+            const logContainer = document.getElementById("logHistory");
+            logContainer.innerHTML = "";
+            for (let i = logEntries.length - 1; i >= 0; i--) {
+                const entry = logEntries[i];
+                if (!favoriteFilter || entry.favorite) {
+                    const card = createLogCard(entry);
+                    logContainer.appendChild(card);
+                }
+            }
+            document.getElementById("openHelp").classList.add("hidden");
+        }
+
+        function addLogEntry(entry) {
+            logEntries.push(entry);
+            renderHistory();
+        }
+
+        function updateLogCard(logEntry) {
+            renderHistory();
+        }
+
+        function toggleFavorite(logId) {
+            const entry = logEntries.find(e => e.id === logId);
+            if (entry) {
+                entry.favorite = !entry.favorite;
+                renderHistory();
+            }
+        }
+
+        function toggleFavoriteFilter() {
+            favoriteFilter = !favoriteFilter;
+            document.getElementById("favoriteFilterStatus").textContent = favoriteFilter ? "On" : "Off";
+            renderHistory();
+        }
+
+        function updateChart(pain, auraFlag) {
+            // Placeholder function for future chart implementation
+        }
+
+        // Photo Modal Functions
+        function openPhotoModal(url) {
+            document.getElementById("photoModalImg").src = url;
+            document.getElementById("photoModal").classList.remove("hidden");
+        }
+
+        function closePhotoModal() {
+            document.getElementById("photoModal").classList.add("hidden");
+        }
+
+        // Edit Log Modal Functions
+        function openEditLogModal(logId) {
+            currentEditingLogId = logId;
+            const logEntry = logEntries.find(entry => entry.id === logId);
+
+            // Set existing form values
+            document.getElementById("painInput").value =
+                (logEntry.pain && logEntry.pain !== "Not set") ? logEntry.pain : "";
+            document.getElementById("auraDurationInput").value =
+                (logEntry.auraDuration && logEntry.auraDuration !== "Not set") ? parseInt(logEntry.auraDuration) : "";
+            document.getElementById("triggersInput").value =
+                (logEntry.triggers && logEntry.triggers !== "Not set") ? logEntry.triggers : "";
+            document.getElementById("auraDescriptionInput").value =
+                (logEntry.auraDescription && logEntry.auraDescription !== "Not set") ? logEntry.auraDescription : "";
+            document.getElementById("auraHeadacheInput").checked =
+                (logEntry.auraHeadache && logEntry.auraHeadache !== "Not set" && logEntry.auraHeadache === "Yes");
+
+            // Clear all previous photo selections
+            document.querySelectorAll("#editPhotoSelection .photo-select").forEach(photo => {
+                photo.classList.remove('selected');
+            });
+
+            // Set selected photos if they exist
+            if (logEntry.photos && logEntry.photos.length > 0) {
+                logEntry.photos.forEach(photoUrl => {
+                    const photoEl = document.querySelector(`#editPhotoSelection [data-photo="${photoUrl}"]`);
+                    if (photoEl) {
+                        photoEl.classList.add('selected');
+                    }
+                });
+                editModalPhotoSelections = [...logEntry.photos];
+            } else {
+                editModalPhotoSelections = [];
+            }
+
+            document.getElementById("editLogModal").classList.remove("hidden");
+        }
+
+        function closeEditLogModal() {
+            document.getElementById("editLogModal").classList.add("hidden");
+            currentEditingLogId = null;
+            editModalPhotoSelections = [];
+        }
+
+        function saveEditedLog() {
+            const pain = document.getElementById("painInput").value;
+            const auraDuration = document.getElementById("auraDurationInput").value;
+            const triggers = document.getElementById("triggersInput").value;
+            const auraDescription = document.getElementById("auraDescriptionInput").value;
+            const auraHeadache = document.getElementById("auraHeadacheInput").checked ? "Yes" : "No";
+
+            const logEntry = logEntries.find(entry => entry.id === currentEditingLogId);
+
+            if (pain !== "") logEntry.pain = pain;
+            if (auraDuration !== "") logEntry.auraDuration = auraDuration + " mins";
+            if (triggers !== "") logEntry.triggers = triggers;
+            if (auraDescription !== "") logEntry.auraDescription = auraDescription;
+            logEntry.auraHeadache = auraHeadache;
+
+            // Save selected photos
+            logEntry.photos = editModalPhotoSelections;
+
+            updateLogCard(logEntry);
+            closeEditLogModal();
+            showToast("Log entry updated successfully!");
+        }
+
+        // Initialize chart on page load
+        updateChart(0, false);
+
+    </script>
+
+    <!-- Advanced Log Wizard Template -->
+    <template id="advancedWizardTemplate">
+        <div id="wizardStep1" class="wizard-step">
+            <h2 class="text-2xl font-bold mb-4">Step 1: Select Aura Type</h2>
+            <div class="mb-6">
+                <label for="dateTime" class="block mb-2 text-lg font-medium">Date/Time</label>
+                <input id="dateTime" type="datetime-local"
+                    class="w-full p-3 rounded-md bg-white/20 border-none outline-none" />
+            </div>
+            <p class="mb-4 text-lg text-gray-300">Please select the aura type(s) you experienced:</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 justify-items-center" id="auraPillsWizard">
+                <button type="button" class="pill" data-aura="Flashing Lights">Flashing Lights</button>
+                <button type="button" class="pill" data-aura="Zigzag Patterns">Zigzag Patterns</button>
+                <button type="button" class="pill" data-aura="Blind Spots">Blind Spots</button>
+                <button type="button" class="pill" data-aura="Tunnel Vision">Tunnel Vision</button>
+                <button type="button" class="pill" data-aura="Double Vision">Double Vision</button>
+                <button type="button" class="pill" data-aura="Numbness">Numbness</button>
+                <button type="button" class="pill" data-aura="Tingling">Tingling</button>
+                <button type="button" class="pill" data-aura="Shakes / Tremors">Shakes / Tremors</button>
+                <button type="button" class="pill" data-aura="Weakness">Weakness</button>
+                <button type="button" class="pill" data-aura="Vertigo">Vertigo</button>
+                <button type="button" class="pill" data-aura="Speech">Speech Issues</button>
+                <button type="button" class="pill" data-aura="Other">Other</button>
+            </div>
+            <div class="mt-6">
+                <button id="wizardNextStep"
+                    class="px-6 py-3 w-full rounded-md bg-[#6129ab] hover:bg-[#6129ab70] text-lg font-semibold"
+                    onclick="goToWizardStep2()">Next</button>
+            </div>
+        </div>
+        <div id="wizardStep2" class="wizard-step hidden">
+            <h2 class="text-2xl font-bold mb-4">Step 2: Select Medications</h2>
+            <p class="mb-4 text-lg text-gray-300">Please select the medication(s) you took:</p>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 justify-items-center" id="medPillsWizard">
+                <button type="button" class="pill" data-med="Ibuprofen">Ibuprofen</button>
+                <button type="button" class="pill" data-med="Acetaminophen">Acetaminophen</button>
+                <button type="button" class="pill" data-med="Aspirin">Aspirin</button>
+                <button type="button" class="pill" data-med="Naproxen">Naproxen</button>
+                <button type="button" class="pill" data-med="Ubrelvy">Ubrelvy</button>
+                <button type="button" class="pill" data-med="Nurtec">Nurtec</button>
+                <button type="button" class="pill" data-med="Imitrex">Imitrex</button>
+                <button type="button" class="pill" data-med="Ergotamines">Ergotamines</button>
+                <button type="button" class="pill" data-med="Gepants">Gepants</button>
+                <button type="button" class="pill" data-med="Beta Blockers">Beta Blockers</button>
+                <button type="button" class="pill" data-med="Other">Other</button>
+                <button type="button" class="pill" data-med="None">None</button>
+            </div>
+            <div class="mt-6">
+                <button id="wizardNextStepFromMed"
+                    class="px-6 py-3 w-full rounded-md bg-[#6129ab] hover:bg-[#6129ab70] text-lg font-semibold"
+                    onclick="goToWizardStep3()">Next</button>
+            </div>
+            <div class="mt-4">
+                <button id="wizardBack"
+                    class="px-6 py-3 w-full rounded-md bg-[#303078] hover:bg-[#30307870] text-lg font-semibold"
+                    onclick="goToWizardStep1()">Back</button>
+            </div>
+        </div>
+        <div id="wizardStep3" class="wizard-step hidden">
+            <h2 class="text-2xl font-bold mb-4">Step 3: Select Visual Aura Photo(s)</h2>
+            <p class="mb-4 text-lg text-gray-300">Please select one or more photos that best represent your visual aura:
+            </p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="photoSelection">
+                <div class="photo-select" data-photo="img/aura1.jpg">
+                    <img src="img/aura1.jpg" alt="Aura 1" title="Bright aura with scintillating scotoma">
+                </div>
+                <div class="photo-select" data-photo="img/aura2.jpg">
+                    <img src="img/aura2.jpg" alt="Aura 2" title="Blurry crescent shaped blind spot, little scotoma">
+                </div>
+                <div class="photo-select" data-photo="img/aura3.jpg">
+                    <img src="img/aura3.jpg" alt="Aura 3" title="Large bright flashes or stationary 'light'">
+                </div>
+                <div class="photo-select" data-photo="img/aura4.jpg">
+                    <img src="img/aura4.jpg" alt="Aura 4"
+                        title="'Electric', jagged, rainbow scotoma that shimmers quickly">
+                </div>
+                <div class="photo-select" data-photo="img/aura5.jpg">
+                    <img src="img/aura5.jpg" alt="Aura 5" title="Broken glass like ring shaped aura, slight shimmering">
+                </div>
+                <div class="photo-select" data-photo="img/aura6.jpg">
+                    <img src="img/aura6.jpg" alt="Aura 6" title="Overall blury vision, no scotoma">
+                </div>
+                <div class="photo-select" data-photo="img/aura7.jpg">
+                    <img src="img/aura7.jpg" alt="Aura 7" title="Jagged and wide rainbow scotoma, shimmering quickly">
+                </div>
+                <div class="photo-select" data-photo="img/aura8.jpg">
+                    <img src="img/aura8.jpg" alt="Aura 8" title="Shimmering patch of rainbow colored light">
+                </div>
+                <div class="photo-select" data-photo="img/aura9.jpg">
+                    <img src="img/aura9.jpg" alt="Aura 9" title="Black and white shimmering scotoma">
+                </div>
+                <div class="photo-select" data-photo="img/aura10.jpg">
+                    <img src="img/aura10.jpg" alt="Aura 10"
+                        title="Geometric shimmering shape, almost invisible besides shimmering">
+                </div>
+                <div class="photo-select" data-photo="img/aura11.jpg">
+                    <img src="img/aura11.jpg" alt="Aura 11"
+                        title="Blurry shimmering dot, expanding outwards towards peripheral vision">
+                </div>
+                <div class="photo-select" data-photo="img/aura12.jpg">
+                    <img src="img/aura12.jpg" alt="Aura 12"
+                        title="Drunk-like blurry vision, shimmering across entire field of view">
+                </div>
+            </div>
+            <div class="mt-6">
+                <button id="wizardSubmit"
+                    class="px-6 py-3 w-full rounded-md bg-[#9054d1] hover:bg-blue-700 text-lg font-semibold"
+                    onclick="submitAdvancedLog()">Submit Log</button>
+            </div>
+            <div class="mt-4">
+                <button id="wizardBackFromPhotos"
+                    class="px-6 py-3 w-full rounded-md bg-[#303078] hover:bg-[#30307870] text-lg font-semibold"
+                    onclick="goToWizardStep2()">Back</button>
+            </div>
+        </div>
+    </template>
+</body>
+
+</html>
