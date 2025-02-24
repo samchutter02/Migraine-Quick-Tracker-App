@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quick Track v6</title>
+    <title>Quick Track v6 - samcwebdev</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Background and typography */
@@ -36,24 +36,36 @@
             padding: 0.5rem 1rem;
             margin: 0.1rem;
             border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 500;
+            font-size: .8rem;
+            font-weight: 700;
             text-align: center;
             border: 2px solid rgba(255, 255, 255, 0.4);
             background-color: rgba(255, 255, 255, 0.1);
             color: #fff;
             transition: background-color 0.2s ease, border-color 0.2s ease;
             white-space: wrap;
+            transition: .1s ease-in-out;
         }
 
         .pill:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.02);
             border-color: rgba(255, 255, 255, 0.7);
         }
 
-        .pill.selected {
+        #auraPillsWizard .pill.selected,
+        #medPillsWizard .pill.selected {
             background-color: #8a4fc9;
             border-color: transparent;
+        }
+
+        .pill.selected.pain-relief,
+        .pill.selected.prescription,
+        .pill.selected.preventative,
+        .pill.selected.supplement,
+        .pill.selected.other,
+        .pill.selected.n-a,
+        .pill.selected.none {
+            border: 5px solid white;
         }
 
         /* Wizard button sizing */
@@ -104,27 +116,34 @@
         /* Toast Notification Styles */
         #toast-container {
             position: fixed;
-            top: 1rem;
-            right: 1rem;
+            top: 10%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             z-index: 2100;
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
         }
 
         .toast {
             background: rgba(0, 0, 0, 0.8);
             color: #fff;
             padding: 0.75rem 1.25rem;
-            margin-top: 0.5rem;
             border-radius: 0.5rem;
             opacity: 0;
-            transform: translateY(-10px);
             text-align: center;
-            animation: fadeInOut 3s forwards;
+            animation: fadeInOut 2s forwards;
+            pointer-events: none;
+            max-width: 300px;
+            margin: 0 auto;
         }
 
         @keyframes fadeInOut {
             0% {
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translateY(20px);
             }
 
             10%,
@@ -135,7 +154,7 @@
 
             100% {
                 opacity: 0;
-                transform: translateY(-10px);
+                transform: translateY(-20px);
             }
         }
 
@@ -477,9 +496,9 @@
 
             /* Landing page adjustments */
             body {
-                overflow-x: hidden;
-                overflow-y: auto;
-                position: relative;
+                background: linear-gradient(120deg, #1a1a4a, #3a3a8a, #6a3aaa, #9a5ada);
+                background-attachment: scroll;
+                background-size: cover;
             }
 
             #landingPage {
@@ -488,7 +507,7 @@
                 left: 0;
                 width: 100%;
                 min-height: 100vh;
-                overflow-y: auto;
+                overflow-y: scroll;
                 padding: 1rem;
                 display: flex;
                 flex-direction: column;
@@ -615,7 +634,7 @@
                 margin: 0.5rem;
             }
 
-            /* Process cards */
+            .log-card,
             .process-card {
                 margin-bottom: 1rem;
             }
@@ -697,7 +716,8 @@
                 </svg>
             </button>
             <h1 class="text-5xl font-extrabold text-white mb-4">Instant Log</h1>
-            <p class="text-xl text-gray-200 mb-8">One click records the current date & time. Add details later.</p>
+            <p class="text-l text-gray-200 mb-8">One click records the current date & time of your migraine episode. Add
+                details later.</p>
             <button onclick="logQuickEpisode()"
                 class="w-full md:w-auto h-20 bg-[#383885] hover:bg-blue-700 text-3xl font-bold rounded-lg shadow-xl px-8 py-4 focus:outline-none focus:ring-1 focus:ring-blue-200 text-white">
                 Instant Log
@@ -713,7 +733,7 @@
                     <h3 class="text-xl font-semibold text-white bg-green-500 rounded p-1 mb-2 set-meds-btn">Set Default
                         Meds</h3>
                     <p class="text-sm text-gray-300">
-                        Set your default medicine cocktail in order to use the Instant Log button.
+                        Set your default medicine cocktail for use with the Instant Log button.
                     </p>
                 </div>
                 <!-- Advanced Log Card -->
@@ -731,7 +751,7 @@
                     class="process-card bg-glass-purple/35 backdrop-blur-lg border border-white/5 p-4 rounded-lg hover:bg-glass-purple/45 transition-all duration-300 shadow-xl">
                     <h3 class="text-xl font-semibold text-white bg-purple-500 rounded p-1 mb-2 history-btn">History</h3>
                     <p class="text-sm text-gray-300">
-                        View and filter past logs to track patterns and triggers over time.
+                        View and filter past logs to track patterns, triggers and medication results over time.
                     </p>
                 </div>
             </div>
@@ -929,6 +949,7 @@
         <div class="absolute inset-0 modal-backdrop"></div>
         <div class="relative glass-card rounded-xl p-6 max-w-sm w-full">
             <h2 class="text-2xl font-bold mb-4 text-whit text-center">Default Medication(s)</h2>
+            <p></p>
             <div class="mb-4">
                 <label for="defaultPain" class="block mb- text-white hidden">Default Pain Intensity (1-10)</label>
                 <!--HIDDEN CLASS TO PRESERVE FUNCTIONALITY-->
@@ -938,19 +959,67 @@
                 <!--HIDDEN CLASS TO PRESERVE FUNCTIONALITY-->
             </div>
             <div class="mb-4">
-                <div class="grid grid-cols-2 md:grid-cols-2 gap-1 md:gap-2" id="defaultMedPills">
-                    <span class="pill" data-med="Ibuprofen">Ibuprofen</span>
-                    <span class="pill" data-med="Acetaminophen">Acetaminophen</span>
-                    <span class="pill" data-med="Aspirin">Aspirin</span>
-                    <span class="pill" data-med="Naproxen">Naproxen</span>
-                    <span class="pill" data-med="Ergotamines">Ergotamines</span>
-                    <span class="pill" data-med="Beta Blockers">Beta Blockers</span>
-                    <span class="pill" data-med="Gepants">Gepants</span>
-                    <span class="pill" data-med="Imitrex">Imitrex</span>
-                    <span class="pill" data-med="Ubrelvy">Ubrelvy</span>
-                    <span class="pill" data-med="Nurtec">Nurtec</span>
-                    <span class="pill bg-gray-500 text-white" data-med="Other">Other</span>
-                    <span class="pill bg-gray-500 text-white" data-med="None">None</span>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded bg-orange-700"></div>
+                        <span class="text-sm text-white">Pain Relief</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded bg-blue-500"></div>
+                        <span class="text-sm text-white">Prescription</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded bg-teal-400"></div>
+                        <span class="text-sm text-white">Preventative</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded bg-purple-500"></div>
+                        <span class="text-sm text-white">Supplements</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 rounded bg-amber-500"></div>
+                        <span class="text-sm text-white">Other</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-1" id="defaultMedPills">
+                    <!-- Pain Relievers / NSAIDs -->
+                    <span class="pill pain-relief bg-orange-700" data-med="Ibuprofen">Ibuprofen</span>
+                    <span class="pill pain-relief bg-orange-700" data-med="Acetaminophen">Acetaminophen</span>
+                    <span class="pill pain-relief bg-orange-700" data-med="Aspirin">Aspirin</span>
+                    <span class="pill pain-relief bg-orange-700" data-med="Naproxen">Naproxen</span>
+                    <span class="pill pain-relief bg-orange-700" data-med="Excedrin Migraine">Excedrin
+                        Migraine</span>
+                
+                    <!-- Prescription Acute Treatments -->
+                    <span class="pill prescription bg-blue-500" data-med="Imitrex">Imitrex (Sumatriptan)</span>
+                    <span class="pill prescription bg-blue-500" data-med="Maxalt">Maxalt (Rizatriptan)</span>
+                    <span class="pill prescription bg-blue-500" data-med="Zomig">Zomig (Zolmitriptan)</span>
+                    <span class="pill prescription bg-blue-500" data-med="Ubrelvy">Ubrelvy</span>
+                    <span class="pill prescription bg-blue-500" data-med="Nurtec">Nurtec</span>
+                    <span class="pill prescription bg-blue-500" data-med="Qulipta">Qulipta</span>
+                
+                    <!-- Preventative Medications -->
+                    <span class="pill preventative bg-teal-400" data-med="Propranolol">Propranolol</span>
+                    <span class="pill preventative bg-teal-400" data-med="Topiramate">Topiramate</span>
+                    <span class="pill preventative bg-teal-400" data-med="Beta Blockers">Beta Blockers</span>
+                    <span class="pill preventative bg-teal-400" data-med="CGRP Inhibitors">CGRP Inhibitors</span>
+                    <span class="pill preventative bg-teal-400" data-med="Botox">Botox</span>
+                    <span class="pill preventative bg-teal-400" data-med="Amitriptyline">Amitriptyline</span>
+                
+                    <!-- Supplements -->
+                    <span class="pill supplement bg-purple-500" data-med="Magnesium">Magnesium</span>
+                    <span class="pill supplement bg-purple-500" data-med="Vitamin B2">Vitamin B2</span>
+                    <span class="pill supplement bg-purple-500" data-med="CoQ10">CoQ10</span>
+                    <span class="pill supplement bg-purple-500" data-med="Butterbur">Butterbur</span>
+                    <span class="pill supplement bg-purple-500" data-med="Feverfew">Feverfew</span>
+                
+                    <!-- Other Medications -->
+                    <span class="pill other bg-amber-500" data-med="Ergotamines">Ergotamines</span>
+                    <span class="pill other bg-amber-500" data-med="DHE">DHE</span>
+                    <span class="pill other bg-amber-500" data-med="Fioricet">Fioricet</span>
+                    <span class="pill other bg-amber-500" data-med="Reglan">Reglan</span>
+                    <span class="pill n-a" data-med="Other">Other</span>
+                    <span class="pill none" data-med="None">None</span>
                 </div>
             </div>
             <div class="flex justify-end gap-2">
@@ -1047,6 +1116,11 @@
             const toast = document.createElement("div");
             toast.className = "toast";
             toast.innerText = message;
+
+            // Remove any existing toasts
+                      container.firstChild.remove();
+            }
+
             container.appendChild(toast);
             setTimeout(() => {
                 toast.remove();
