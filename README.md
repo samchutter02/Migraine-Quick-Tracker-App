@@ -1,4 +1,4 @@
-# Quick Track v4.7
+# Quick Track v6.0
 
 A **high-contrast, migraine-friendly web app** designed for fast and easy migraine episode tracking. This app prioritizes **quick logging**, **detailed analytics**, and **low-stimulus mode** for users experiencing visual auras.
 
