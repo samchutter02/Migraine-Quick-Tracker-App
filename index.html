@@ -4,18 +4,18 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quick Track v4.7</title>
+    <title>Quick Track v6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Background and typography */
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(120deg, #090017, #220a47, #4e0f8d, #006b95);
+            background: linear-gradient(120deg, #1a1a4a, #3a3a8a, #6a3aaa, #9a5ada);
+
             background-attachment: fixed;
             background-size: cover;
             color: white;
         }
-
 
         /* Glass card styling */
         .glass-card {
@@ -52,7 +52,7 @@
         }
 
         .pill.selected {
-            background-color: #3B82F6;
+            background-color: #8a4fc9;
             border-color: transparent;
         }
 
@@ -67,31 +67,38 @@
 
         /* Photo selection styling */
         .photo-select {
-            width: 100px;
-            height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: 2px solid transparent;
-            border-radius: 10px;
+            position: relative;
             overflow: hidden;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         .photo-select:hover {
             transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 15px rgba(96, 41, 171, 0.3);
         }
 
         .photo-select.selected {
-            border: 3px solid #3B82F6;
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.8);
+            border: 7px outset #d400ff;
+            box-shadow: 0 0 20px rgba(138, 79, 201, 0.5);
+            background: rgba(138, 79, 201, 0.1);
         }
 
         .photo-select img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.3s ease;
+            filter: brightness(0.9) contrast(1.2);
+        }
+
+        .photo-select:hover img {
+            transform: scale(1.1);
+            filter: brightness(1) contrast(1.3);
         }
 
         /* Toast Notification Styles */
@@ -283,7 +290,7 @@
         }
 
         .log-card.advanced::before {
-            background: linear-gradient(to bottom, #10B981, #6EE7B7);
+            background: linear-gradient(to bottom, #9054d1, #9054d1);
         }
 
         .log-card-inner {
@@ -331,14 +338,14 @@
         }
 
         .log-type-badge.quick {
-            background: rgba(59, 130, 246, 0.2);
-            color: #93c5fd;
+            background: #6f8af8;
+            color: #ffffff;
             border: 1px solid rgba(147, 197, 253, 0.2);
         }
 
         .log-type-badge.advanced {
-            background: rgba(16, 185, 129, 0.2);
-            color: #6ee7b7;
+            background: #be64d9;
+            color: #ffffff;
             border: 1px solid rgba(110, 231, 183, 0.2);
         }
 
@@ -692,7 +699,7 @@
             <h1 class="text-5xl font-extrabold text-white mb-4">Instant Log</h1>
             <p class="text-xl text-gray-200 mb-8">One click records the current date & time. Add details later.</p>
             <button onclick="logQuickEpisode()"
-                class="w-full md:w-auto h-20 bg-blue-800 hover:bg-blue-700 text-3xl font-bold rounded-lg shadow-xl px-8 py-4 focus:outline-none focus:ring-4 focus:ring-blue-400 text-white">
+                class="w-full md:w-auto h-20 bg-[#383885] hover:bg-blue-700 text-3xl font-bold rounded-lg shadow-xl px-8 py-4 focus:outline-none focus:ring-1 focus:ring-blue-200 text-white">
                 Instant Log
             </button>
         </div>
@@ -737,7 +744,7 @@
         <div class="max-w-4xl w-full glass-card rounded-xl shadow-xl p-6 flex flex-col relative">
             <!-- Back to Home Button -->
             <button id="backHome"
-                class="absolute top-4 left-4 bg-gray-700 text-white max-sm:max-w-[70px] max-md:max-w-[70px] px-3 py-1 rounded focus:outline-none"
+                class="absolute top-4 left-4 bg-[#625da1] text-white max-sm:max-w-[70px] max-md:max-w-[70px] px-3 py-1 rounded focus:outline-none"
                 onclick="goHome()">Home</button>
             <!-- Settings Icon -->
             <button id="openSettings" class="absolute top-4 right-4 focus:outline-none max-sm:hidden" title="Settings">
@@ -757,7 +764,7 @@
                         d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 15h.01M12 7a3 3 0 013 3c0 1.5-1 2.5-2 3l-1 1" />
                 </svg>
             </button>
-            <h1 class="text-3xl font-extrabold text-center mb-4 mt-10 max-sm:hidden">Quick Track v4.7</h1>
+            <h1 class="text-3xl font-extrabold text-center mb-4 mt-10 max-sm:hidden">Quick Track v6</h1>
             <!-- Tabs Navigation -->
             <div class="flex justify-center gap-4 mb-6 border-b border-white/20">
                 <button class="tab-btn active max-sm:hidden" data-target="advancedTab"
@@ -782,8 +789,6 @@
                                 Lights</button>
                             <button type="button" class="pill" data-aura="Zigzag Patterns">Zigzag Patterns</button>
                             <button type="button" class="pill" data-aura="Blind Spots">Blind Spots</button>
-                            <button type="button" class="pill" data-aura="Scintillating Scotoma">Scintillating
-                                Scotoma</button>
                             <button type="button" class="pill" data-aura="Tunnel Vision">Tunnel Vision</button>
                             <button type="button" class="pill" data-aura="Double Vision">Double Vision</button>
                             <button type="button" class="pill" data-aura="Numbness">Numbness</button>
@@ -791,13 +796,12 @@
                             <button type="button" class="pill" data-aura="Shakes / Tremors">Shakes / Tremors</button>
                             <button type="button" class="pill" data-aura="Weakness">Weakness</button>
                             <button type="button" class="pill" data-aura="Vertigo">Vertigo</button>
-                            <button type="button" class="pill" data-aura="Hemiplegic Symptoms">Hemiplegic</button>
                             <button type="button" class="pill" data-aura="Speech">Speech Issues</button>
                             <button type="button" class="pill" data-aura="Other">Other</button>
                         </div>
                         <div class="mt-6">
                             <button id="wizardNextStep"
-                                class="px-6 py-3 w-full rounded-md bg-green-800 hover:bg-green-700 text-lg font-semibold"
+                                class="px-6 py-3 w-full rounded-md bg-[#6129ab] hover:bg-[#6129ab70] text-lg font-semibold"
                                 onclick="goToWizardStep2()">Next</button>
                         </div>
                     </div>
@@ -813,7 +817,6 @@
                             <button type="button" class="pill" data-med="Ubrelvy">Ubrelvy</button>
                             <button type="button" class="pill" data-med="Nurtec">Nurtec</button>
                             <button type="button" class="pill" data-med="Imitrex">Imitrex</button>
-                            <button type="button" class="pill" data-med="Triptans">Triptans</button>
                             <button type="button" class="pill" data-med="Ergotamines">Ergotamines</button>
                             <button type="button" class="pill" data-med="Gepants">Gepants</button>
                             <button type="button" class="pill" data-med="Beta Blockers">Beta Blockers</button>
@@ -822,12 +825,12 @@
                         </div>
                         <div class="mt-6">
                             <button id="wizardNextStepFromMed"
-                                class="px-6 py-3 w-full rounded-md bg-green-800 hover:bg-green-700 text-lg font-semibold"
+                                class="px-6 py-3 w-full rounded-md bg-[#6129ab] hover:bg-[#6129ab70] text-lg font-semibold"
                                 onclick="goToWizardStep3()">Next</button>
                         </div>
                         <div class="mt-4">
                             <button id="wizardBack"
-                                class="px-6 py-3 w-full rounded-md bg-gray-700 hover:bg-gray-600 text-lg font-semibold"
+                                class="px-6 py-3 w-full rounded-md bg-[#303078] hover:bg-[#30307870] text-lg font-semibold"
                                 onclick="goToWizardStep1()">Back</button>
                         </div>
                     </div>
@@ -876,12 +879,12 @@
                         </div>
                         <div class="mt-6">
                             <button id="wizardSubmit"
-                                class="px-6 py-3 w-full rounded-md bg-blue-800 hover:bg-blue-700 text-lg font-semibold"
+                                class="px-6 py-3 w-full rounded-md bg-[#9054d1] hover:bg-[#9054d150] text-lg font-semibold"
                                 onclick="submitAdvancedLog()">Submit Log</button>
                         </div>
                         <div class="mt-4">
                             <button id="wizardBackFromPhotos"
-                                class="px-6 py-3 w-full rounded-md bg-gray-700 hover:bg-gray-600 text-lg font-semibold"
+                                class="px-6 py-3 w-full rounded-md bg-[#303078] hover:bg-[#30307870] text-lg font-semibold"
                                 onclick="goToWizardStep2()">Back</button>
                         </div>
                     </div>
@@ -916,10 +919,8 @@
     <!-- Photo Preview Modal -->
     <div id="photoModal" class="fixed inset-0 flex items-center justify-center hidden z-50">
         <div class="absolute inset-0 modal-backdrop" onclick="closePhotoModal()"></div>
-        <div class="relative bg-white p-4 rounded shadow-lg z-10">
-            <img id="photoModalImg" src="" alt="Photo Preview" class="max-w-full max-h-screen">
-            <button class="mt-4 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md"
-                onclick="closePhotoModal()">Close</button>
+        <div class="relative bg-[#b2a7d1] p-4 rounded-xl shadow-lg z-10">
+            <img id="photoModalImg" src="" alt="Photo Preview" class="max-w-full max-h-screen rounded-xl">
         </div>
     </div>
 
@@ -945,7 +946,6 @@
                     <span class="pill" data-med="Ergotamines">Ergotamines</span>
                     <span class="pill" data-med="Beta Blockers">Beta Blockers</span>
                     <span class="pill" data-med="Gepants">Gepants</span>
-                    <span class="pill" data-med="Triptans">Triptans</span>
                     <span class="pill" data-med="Imitrex">Imitrex</span>
                     <span class="pill" data-med="Ubrelvy">Ubrelvy</span>
                     <span class="pill" data-med="Nurtec">Nurtec</span>
@@ -956,7 +956,7 @@
             <div class="flex justify-end gap-2">
                 <button class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-sm text-white"
                     onclick="closeSettings()">Cancel</button>
-                <button class="px-4 py-2 rounded-md bg-blue-800 hover:bg-blue-700 text-sm text-white font-semibold"
+                <button class="px-4 py-2 rounded-md bg-[#8c50cc] hover:bg-[#8c50cc70] text-sm text-white font-semibold"
                     onclick="saveDefaultSettings()">Save</button>
             </div>
         </div>
@@ -997,7 +997,7 @@
                     episodes for later.</p>
             </div>
             <div class="flex justify-end gap-2">
-                <button class="px-4 py-2 rounded-md bg-[#5011cf] hover:bg-[#8e34c9] text-sm text-white"
+                <button class="px-4 py-2 rounded-md bg-[#8c50cc] hover:bg-[#8c50cc70] text-sm text-white"
                     onclick="closeHelp()">Close</button>
             </div>
         </div>
@@ -1035,7 +1035,7 @@
             <div class="flex justify-end gap-2 mt-4">
                 <button id="cancelEditLog" class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-white"
                     onclick="closeEditLogModal()">Cancel</button>
-                <button id="saveEditLog" class="px-4 py-2 rounded-md bg-blue-800 hover:bg-blue-700 text-white"
+                <button id="saveEditLog" class="px-4 py-2 rounded-md bg-[#8c50cc] hover:bg-[#8c50cc70] text-white"
                     onclick="saveEditedLog()">Save</button>
             </div>
         </div>
@@ -1499,7 +1499,6 @@
                 <button type="button" class="pill" data-aura="Flashing Lights">Flashing Lights</button>
                 <button type="button" class="pill" data-aura="Zigzag Patterns">Zigzag Patterns</button>
                 <button type="button" class="pill" data-aura="Blind Spots">Blind Spots</button>
-                <button type="button" class="pill" data-aura="Scintillating Scotoma">Scintillating Scotoma</button>
                 <button type="button" class="pill" data-aura="Tunnel Vision">Tunnel Vision</button>
                 <button type="button" class="pill" data-aura="Double Vision">Double Vision</button>
                 <button type="button" class="pill" data-aura="Numbness">Numbness</button>
@@ -1507,13 +1506,12 @@
                 <button type="button" class="pill" data-aura="Shakes / Tremors">Shakes / Tremors</button>
                 <button type="button" class="pill" data-aura="Weakness">Weakness</button>
                 <button type="button" class="pill" data-aura="Vertigo">Vertigo</button>
-                <button type="button" class="pill" data-aura="Hemiplegic Symptoms">Hemiplegic</button>
                 <button type="button" class="pill" data-aura="Speech">Speech Issues</button>
                 <button type="button" class="pill" data-aura="Other">Other</button>
             </div>
             <div class="mt-6">
                 <button id="wizardNextStep"
-                    class="px-6 py-3 w-full rounded-md bg-green-800 hover:bg-green-700 text-lg font-semibold"
+                    class="px-6 py-3 w-full rounded-md bg-[#6129ab] hover:bg-[#6129ab70] text-lg font-semibold"
                     onclick="goToWizardStep2()">Next</button>
             </div>
         </div>
@@ -1528,7 +1526,6 @@
                 <button type="button" class="pill" data-med="Ubrelvy">Ubrelvy</button>
                 <button type="button" class="pill" data-med="Nurtec">Nurtec</button>
                 <button type="button" class="pill" data-med="Imitrex">Imitrex</button>
-                <button type="button" class="pill" data-med="Triptans">Triptans</button>
                 <button type="button" class="pill" data-med="Ergotamines">Ergotamines</button>
                 <button type="button" class="pill" data-med="Gepants">Gepants</button>
                 <button type="button" class="pill" data-med="Beta Blockers">Beta Blockers</button>
@@ -1537,12 +1534,12 @@
             </div>
             <div class="mt-6">
                 <button id="wizardNextStepFromMed"
-                    class="px-6 py-3 w-full rounded-md bg-green-800 hover:bg-green-700 text-lg font-semibold"
+                    class="px-6 py-3 w-full rounded-md bg-[#6129ab] hover:bg-[#6129ab70] text-lg font-semibold"
                     onclick="goToWizardStep3()">Next</button>
             </div>
             <div class="mt-4">
                 <button id="wizardBack"
-                    class="px-6 py-3 w-full rounded-md bg-gray-700 hover:bg-gray-600 text-lg font-semibold"
+                    class="px-6 py-3 w-full rounded-md bg-[#303078] hover:bg-[#30307870] text-lg font-semibold"
                     onclick="goToWizardStep1()">Back</button>
             </div>
         </div>
@@ -1590,12 +1587,12 @@
             </div>
             <div class="mt-6">
                 <button id="wizardSubmit"
-                    class="px-6 py-3 w-full rounded-md bg-blue-800 hover:bg-blue-700 text-lg font-semibold"
+                    class="px-6 py-3 w-full rounded-md bg-[#9054d1] hover:bg-blue-700 text-lg font-semibold"
                     onclick="submitAdvancedLog()">Submit Log</button>
             </div>
             <div class="mt-4">
                 <button id="wizardBackFromPhotos"
-                    class="px-6 py-3 w-full rounded-md bg-gray-700 hover:bg-gray-600 text-lg font-semibold"
+                    class="px-6 py-3 w-full rounded-md bg-[#303078] hover:bg-[#30307870] text-lg font-semibold"
                     onclick="goToWizardStep2()">Back</button>
             </div>
         </div>
