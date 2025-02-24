@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quick Track v6 - samcwebdev</title>
+    <title>Quick Track v6.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Background and typography */
@@ -134,7 +134,7 @@
             border-radius: 0.5rem;
             opacity: 0;
             text-align: center;
-            animation: fadeInOut 2s forwards;
+            animation: fadeInOut 3s forwards;
             pointer-events: none;
             max-width: 300px;
             margin: 0 auto;
@@ -304,12 +304,9 @@
             background: var(--log-border-color, #3B82F6);
         }
 
+        .log-card.advanced::before,
         .log-card.quick::before {
             background: linear-gradient(to bottom, #3B82F6, #93C5FD);
-        }
-
-        .log-card.advanced::before {
-            background: linear-gradient(to bottom, #9054d1, #9054d1);
         }
 
         .log-card-inner {
@@ -729,7 +726,7 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Default Meds Card -->
                 <div onclick="document.getElementById('settingsModal').classList.remove('hidden')"
-                    class="process-card bg-glass-midnight/40 backdrop-blur-lg border border-white/5 p-4 rounded-lg hover:bg-glass-midnight/50 transition-all duration-300 shadow-xl">
+                    class="process-card bg-glass-midnight/40 backdrop-blur-lg border border-white/5 p-4 rounded-lg hover:bg-glass-midnight/50 hover:scale-[103%] transition-all duration-300 shadow-xl">
                     <h3 class="text-xl font-semibold text-white bg-green-500 rounded p-1 mb-2 set-meds-btn">Set Default
                         Meds</h3>
                     <p class="text-sm text-gray-300">
@@ -738,7 +735,7 @@
                 </div>
                 <!-- Advanced Log Card -->
                 <div onclick="startAdvancedLog()"
-                    class="process-card bg-glass-navy/40 backdrop-blur-lg border border-white/5 p-4 rounded-lg hover:bg-glass-navy/50 transition-all duration-300 shadow-xl">
+                    class="process-card bg-glass-navy/40 backdrop-blur-lg border border-white/5 p-4 rounded-lg hover:bg-glass-navy/50 hover:scale-[103%] transition-all duration-300 shadow-xl">
                     <h3 class="text-xl font-semibold text-white bg-red-500 rounded p-1 mb-2 advanced-log-btn">Advanced
                         Log</h3>
                     <p class="text-sm text-gray-300">
@@ -748,7 +745,7 @@
 
                 <!-- History Card -->
                 <div onclick="startHistory()"
-                    class="process-card bg-glass-purple/35 backdrop-blur-lg border border-white/5 p-4 rounded-lg hover:bg-glass-purple/45 transition-all duration-300 shadow-xl">
+                    class="process-card bg-glass-purple/35 backdrop-blur-lg border border-white/5 p-4 rounded-lg hover:bg-glass-purple/45 hover:scale-[103%] transition-all duration-300 shadow-xl">
                     <h3 class="text-xl font-semibold text-white bg-purple-500 rounded p-1 mb-2 history-btn">History</h3>
                     <p class="text-sm text-gray-300">
                         View and filter past logs to track patterns, triggers and medication results over time.
@@ -784,7 +781,7 @@
                         d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 15h.01M12 7a3 3 0 013 3c0 1.5-1 2.5-2 3l-1 1" />
                 </svg>
             </button>
-            <h1 class="text-3xl font-extrabold text-center mb-4 mt-10 max-sm:hidden">Quick Track v6</h1>
+            <h1 class="text-3xl font-extrabold text-center mb-4 mt-10 max-sm:hidden">Quick Track v6.1</h1>
             <!-- Tabs Navigation -->
             <div class="flex justify-center gap-4 mb-6 border-b border-white/20">
                 <button class="tab-btn active max-sm:hidden" data-target="advancedTab"
@@ -989,7 +986,7 @@
                     <span class="pill pain-relief bg-orange-700" data-med="Naproxen">Naproxen</span>
                     <span class="pill pain-relief bg-orange-700" data-med="Excedrin Migraine">Excedrin
                         Migraine</span>
-                
+
                     <!-- Prescription Acute Treatments -->
                     <span class="pill prescription bg-blue-500" data-med="Imitrex">Imitrex (Sumatriptan)</span>
                     <span class="pill prescription bg-blue-500" data-med="Maxalt">Maxalt (Rizatriptan)</span>
@@ -997,7 +994,7 @@
                     <span class="pill prescription bg-blue-500" data-med="Ubrelvy">Ubrelvy</span>
                     <span class="pill prescription bg-blue-500" data-med="Nurtec">Nurtec</span>
                     <span class="pill prescription bg-blue-500" data-med="Qulipta">Qulipta</span>
-                
+
                     <!-- Preventative Medications -->
                     <span class="pill preventative bg-teal-400" data-med="Propranolol">Propranolol</span>
                     <span class="pill preventative bg-teal-400" data-med="Topiramate">Topiramate</span>
@@ -1005,14 +1002,14 @@
                     <span class="pill preventative bg-teal-400" data-med="CGRP Inhibitors">CGRP Inhibitors</span>
                     <span class="pill preventative bg-teal-400" data-med="Botox">Botox</span>
                     <span class="pill preventative bg-teal-400" data-med="Amitriptyline">Amitriptyline</span>
-                
+
                     <!-- Supplements -->
                     <span class="pill supplement bg-purple-500" data-med="Magnesium">Magnesium</span>
                     <span class="pill supplement bg-purple-500" data-med="Vitamin B2">Vitamin B2</span>
                     <span class="pill supplement bg-purple-500" data-med="CoQ10">CoQ10</span>
                     <span class="pill supplement bg-purple-500" data-med="Butterbur">Butterbur</span>
                     <span class="pill supplement bg-purple-500" data-med="Feverfew">Feverfew</span>
-                
+
                     <!-- Other Medications -->
                     <span class="pill other bg-amber-500" data-med="Ergotamines">Ergotamines</span>
                     <span class="pill other bg-amber-500" data-med="DHE">DHE</span>
@@ -1023,7 +1020,7 @@
                 </div>
             </div>
             <div class="flex justify-end gap-2">
-                <button class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-sm text-white"
+                <button class="px-4 py-2 rounded-md bg-gray-600 hover:bg-gray-500 text-sm text-white"
                     onclick="closeSettings()">Cancel</button>
                 <button class="px-4 py-2 rounded-md bg-[#8c50cc] hover:bg-[#8c50cc70] text-sm text-white font-semibold"
                     onclick="saveDefaultSettings()">Save</button>
@@ -1073,36 +1070,89 @@
     </div>
 
     <!-- Edit Log Modal -->
+    <!-- Edit Log Modal -->
     <div id="editLogModal" class="fixed inset-0 flex items-center justify-center hidden z-50">
         <div class="absolute inset-0 modal-backdrop"></div>
-        <div class="relative glass-card rounded-xl p-6 max-w-sm w-full">
+        <div class="relative glass-card rounded-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <h2 class="text-2xl font-bold mb-4 text-white">Edit Log Entry</h2>
-            <div>
-                <label for="painInput" class="block mb-1 text-white">Pain (1-10)</label>
-                <input id="painInput" type="number" min="1" max="10"
-                    class="w-full p-2 rounded-md bg-white/20 border-none outline-none">
+<!-- Basic Info Section -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label for="painInput" class="block mb-1 text-white">Pain (1-10)</label>
+                    <input id="painInput" type="number" min="1" max="10"
+                        class="w-full p-2 rounded-md bg-white/20 border-none outline-none">
+                </div>
+                <div>
+                    <label for="auraDurationInput" class="block mb-1 text-white">Aura Duration (minutes)</label>
+                    <input id="auraDurationInput" type="number" min="0"
+                        class="w-full p-2 rounded-md bg-white/20 border-none outline-none">
+                </div>
+                <div class="md:col-span-2">
+                    <label for="triggersInput" class="block mb-1 text-white">Triggers (comma separated)</label>
+                    <input id="triggersInput" type="text" class="w-full p-2 rounded-md bg-white/20 border-none outline-none">
+                    </div>
+                <div class="md:col-span-2">
+                    <label for="auraDescriptionInput" class="block mb-1 text-white">Aura Description</label>
+                    <textarea id="auraDescriptionInput" rows="3"
+                        class="w-full p-2 rounded-md bg-white/20 border-none outline-none"></textarea>
+                </div>
+                <div class="flex items-center">
+                    <input id="auraHeadacheInput" type="checkbox" class="form-checkbox text-blue-600">
+                    <label for="auraHeadacheInput" class="ml-2 text-white">Aura followed by headache?</label>
+                </div>
             </div>
-            <div class="mt-4">
-                <label for="auraDurationInput" class="block mb-1 text-white">Aura Duration (minutes)</label>
-                <input id="auraDurationInput" type="number" min="0"
-                    class="w-full p-2 rounded-md bg-white/20 border-none outline-none">
+            
+            <!-- Photo Selection Section -->
+            <div class="mb-6">
+                <h3 class="text-xl font-semibold mb-3 text-white">Visual Aura Photos</h3>
+                <p class="text-sm text-gray-300 mb-4">Select photos that represent your visual aura:</p>
+            
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="editPhotoSelection">
+                    <div class="photo-select" data-photo="img/aura1.jpg">
+                        <img src="img/aura1.jpg" alt="Aura 1" title="Bright aura with scintillating scotoma">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura2.jpg">
+                        <img src="img/aura2.jpg" alt="Aura 2" title="Blurry crescent shaped blind spot, little scotoma">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura3.jpg">
+                        <img src="img/aura3.jpg" alt="Aura 3" title="Large bright flashes or stationary 'light'">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura4.jpg">
+                        <img src="img/aura4.jpg" alt="Aura 4" title="'Electric', jagged, rainbow scotoma that shimmers quickly">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura5.jpg">
+                        <img src="img/aura5.jpg" alt="Aura 5" title="Broken glass like ring shaped aura, slight shimmering">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura6.jpg">
+                        <img src="img/aura6.jpg" alt="Aura 6" title="Overall blury vision, no scotoma">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura7.jpg">
+                        <img src="img/aura7.jpg" alt="Aura 7" title="Jagged and wide rainbow scotoma, shimmering quickly">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura8.jpg">
+                        <img src="img/aura8.jpg" alt="Aura 8" title="Shimmering patch of rainbow colored light">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura9.jpg">
+                        <img src="img/aura9.jpg" alt="Aura 9" title="Black and white shimmering scotoma">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura10.jpg">
+                        <img src="img/aura10.jpg" alt="Aura 10"
+                            title="Geometric shimmering shape, almost invisible besides shimmering">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura11.jpg">
+                        <img src="img/aura11.jpg" alt="Aura 11"
+                            title="Blurry shimmering dot, expanding outwards towards peripheral vision">
+                    </div>
+                    <div class="photo-select" data-photo="img/aura12.jpg">
+                        <img src="img/aura12.jpg" alt="Aura 12"
+                            title="Drunk-like blurry vision, shimmering across entire field of view">
+                    </div>
+                </div>
             </div>
-            <div class="mt-4">
-                <label for="triggersInput" class="block mb-1 text-white">Triggers (comma separated)</label>
-                <input id="triggersInput" type="text"
-                    class="w-full p-2 rounded-md bg-white/20 border-none outline-none">
-            </div>
-            <div class="mt-4">
-                <label for="auraDescriptionInput" class="block mb-1 text-white">Aura Description</label>
-                <textarea id="auraDescriptionInput" rows="3"
-                    class="w-full p-2 rounded-md bg-white/20 border-none outline-none"></textarea>
-            </div>
-            <div class="mt-4 flex items-center">
-                <input id="auraHeadacheInput" type="checkbox" class="form-checkbox text-blue-600">
-                <label for="auraHeadacheInput" class="ml-2 text-white">Aura followed by headache?</label>
-            </div>
+            
+            <!-- Action Buttons -->
             <div class="flex justify-end gap-2 mt-4">
-                <button id="cancelEditLog" class="px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 text-white"
+                <button id="cancelEditLog" class="px-4 py-2 rounded-md bg-gray-600 hover:bg-gray-500 text-white"
                     onclick="closeEditLogModal()">Cancel</button>
                 <button id="saveEditLog" class="px-4 py-2 rounded-md bg-[#8c50cc] hover:bg-[#8c50cc70] text-white"
                     onclick="saveEditedLog()">Save</button>
@@ -1118,7 +1168,8 @@
             toast.innerText = message;
 
             // Remove any existing toasts
-                      container.firstChild.remove();
+            while (container.firstChild) {
+                container.firstChild.remove();
             }
 
             container.appendChild(toast);
@@ -1137,6 +1188,7 @@
         let wizardAuraSelections = [];
         let wizardMedSelections = [];
         let wizardPhotoSelections = [];
+        let editModalPhotoSelections = [];
         let favoriteFilter = false;
 
         // Helper function to activate a tab
@@ -1205,9 +1257,11 @@
         document.getElementById("openSettingsLanding").addEventListener("click", () => {
             document.getElementById("settingsModal").classList.remove("hidden");
         });
+
         function closeSettings() {
             document.getElementById("settingsModal").classList.add("hidden");
         }
+
         function saveDefaultSettings() {
             const painInput = document.getElementById("defaultPain").value;
             defaultPain = painInput ? painInput : 5;
@@ -1216,9 +1270,12 @@
             showToast("Default settings saved!");
             closeSettings();
         }
+
         document.getElementById("defaultPain").addEventListener("input", (e) => {
             document.getElementById("defaultPainValue").textContent = e.target.value;
         });
+
+        // Initi    t med pills
         document.addEventListener("DOMContentLoaded", function () {
             const defaultMedPills = document.querySelectorAll("#defaultMedPills .pill");
             defaultMedPills.forEach(pill => {
@@ -1241,6 +1298,7 @@
         document.getElementById("openHelpLanding").addEventListener("click", () => {
             document.getElementById("helpModal").classList.remove("hidden");
         });
+
         function closeHelp() {
             document.getElementById("helpModal").classList.add("hidden");
         }
@@ -1256,11 +1314,14 @@
                 updateWizardMedSelections();
             }
             const photoEl = e.target.closest(".photo-select");
-            if (photoEl && photoEl.parentElement.id === "photoSelection") {
-                photoEl.classList.toggle("selected");
-                updateWizardPhotoSelections();
+            if (photoEl) {
+                if (photoEl.parentElement.id === "photoSelection") {
+                                    photoEl.classL                                cted");
+                    updateWizardPhotoSelections();
+                                   if (photoEl.parentElement.id === "editPhotoSelect                                                                                        classList.toggle("selecte                                                     updateEditModalPhotoSelecti                                                               }
             }
         });
+
         function updateWizardAuraSelections() {
             wizardAuraSelections = [];
             const auraButtons = document.querySelectorAll("#auraPillsWizard .pill");
@@ -1270,6 +1331,7 @@
                 }
             });
         }
+
         function updateWizardMedSelections() {
             wizardMedSelections = [];
             const medButtons = document.querySelectorAll("#medPillsWizard .pill");
@@ -1279,6 +1341,7 @@
                 }
             });
         }
+
         function updateWizardPhotoSelections() {
             wizardPhotoSelections = [];
             const photoButtons = document.querySelectorAll("#photoSelection .photo-select.selected");
@@ -1286,6 +1349,13 @@
                 wizardPhotoSelections.push(btn.getAttribute("data-photo"));
             });
         }
+
+                  on up    lPhotoSelections() {
+            edi            s = [];
+                           cument.querySelectorAll("#editPhotoSelection .photo-select.se                    uttons.forEac                            PhotoSelections.push(b                a-photo"));
+            });
+        }
+
         function activateWizardStep(step) {
             if (step === 1) {
                 document.getElementById("wizardStep1").classList.remove("hidden");
@@ -1301,6 +1371,7 @@
                 document.getElementById("wizardStep3").classList.remove("hidden");
             }
         }
+
         function goToWizardStep2() {
             updateWizardAuraSelections();
             if (wizardAuraSelections.length === 0) {
@@ -1309,13 +1380,16 @@
             }
             activateWizardStep(2);
         }
+
         function goToWizardStep1() {
             activateWizardStep(1);
         }
+
         function goToWizardStep3() {
             updateWizardPhotoSelections();
             activateWizardStep(3);
         }
+
         function submitAdvancedLog() {
             updateWizardMedSelections();
             updateWizardPhotoSelections();
@@ -1347,9 +1421,7 @@
             document.querySelectorAll("#medPillsWizard .pill").forEach(btn => btn.classList.remove("selected"));
             document.querySelectorAll("#photoSelection .photo-select").forEach(btn => btn.classList.remove("selected"));
             goHome();
-        }
-
-        // History and Favorites Functions
+        }// History and Favorites Functions
         function createLogCard(entry) {
             let card = document.createElement("div");
             card.className = `log-card ${entry.quick ? 'quick' : 'advanced'}`;
@@ -1366,13 +1438,6 @@
           <span class="timestamp-text">${entry.time}</span>
         </div>
         <div class="flex items-center gap-3">
-          <div class="log-type-badge ${entry.quick ? 'quick' : 'advanced'}">
-            ${entry.quick ?
-                    '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>' :
-                    '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
-                }
-            ${entry.quick ? 'Instant Log' : 'Advanced Log'}
-          </div>
           <button onclick="toggleFavorite(${entry.id})" class="favorite-btn ${entry.favorite ? 'active' : ''}">
             ${entry.favorite ?
                     `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
@@ -1483,9 +1548,6 @@
             return card;
         }
 
-
-
-
         function renderHistory() {
             const logContainer = document.getElementById("logHistory");
             logContainer.innerHTML = "";
@@ -1496,15 +1558,18 @@
                     logContainer.appendChild(card);
                 }
             }
-            document.getElementById("openHelp").classList.add("hidden")
+            document.getElementById("openHelp").classList.add("hidden");
         }
+
         function addLogEntry(entry) {
             logEntries.push(entry);
             renderHistory();
         }
+
         function updateLogCard(logEntry) {
             renderHistory();
         }
+
         function toggleFavorite(logId) {
             const entry = logEntries.find(e => e.id === logId);
             if (entry) {
@@ -1512,51 +1577,85 @@
                 renderHistory();
             }
         }
+
         function toggleFavoriteFilter() {
             favoriteFilter = !favoriteFilter;
             document.getElementById("favoriteFilterStatus").textContent = favoriteFilter ? "On" : "Off";
             renderHistory();
         }
+
         function updateChart(pain, auraFlag) {
-            // Placeholder function
+            // Placeholder function for future chart implementation
         }
-        updateChart(0, false);
+
+        // Photo Modal Functions
         function openPhotoModal(url) {
             document.getElementById("photoModalImg").src = url;
             document.getElementById("photoModal").classList.remove("hidden");
         }
+
         function closePhotoModal() {
             document.getElementById("photoModal").classList.add("hidden");
         }
+
+              dal Functions
         function openEditLogModal(logId) {
             currentEditingLogId = logId;
             const logEntry = logEntries.find(entry => entry.id === logId);
-            document.getElementById("painInput").value = (logEntry.pain && logEntry.pain !== "Not set") ? logEntry.pain : "";
-            document.getElementById("auraDurationInput").value = (logEntry.auraDuration && logEntry.auraDuration !== "Not set") ? parseInt(logEntry.auraDuration) : "";
-            document.getElementById("triggersInput").value = (logEntry.triggers && logEntry.triggers !== "Not set") ? logEntry.triggers : "";
-            document.getElementById("auraDescriptionInput").value = (logEntry.auraDescription && logEntry.auraDescription !== "Not set") ? logEntry.auraDescription : "";
-            document.getElementById("auraHeadacheInput").checked = (logEntry.auraHeadache && logEntry.auraHeadache !== "Not set" && logEntry.auraHeadache === "Yes");
+
+                      rm values
+            document.getElementByI                                         logEntry.pain !==             Entr                 do    etE           at    ").                (logEntry.auraDuration              ion !== "Not set") ? parseIn        uraDuration) : "";
+            document.getElementByI        nput").value =
+             ntry         logEntry.trigger           ntry.triggers : "";
+            documen            raD    onInput").value =
+            (logEntry.auraD    on         Description !== "Not     logEntry.auraDescriptio                ment.getElementById("auraHeadacheInput").checked =
+          try.auraHeadache && logEntry.         !== "Not set" && logEntry.a    che    s");
+
+              ar     io        ections
+          cument.querySelectorAll("#editPhoto        ho    t").forEach(photo =                    assList.remove('selected');
+                        Set selected photos                   if (logEntry.photos && logEntry.photos.                          logEntry.photos.forEach(p        
+                         toEl = document        (`#editPhotoSelection [d          ;
+                    if (photoEl) {
+                        photoEl.classList.add('selected'                   }
+                });
+                           lections = [...logE        ;
+            } else {
+                editMo        s = [];
+            }
+
             document.getElementById("editLogModal").classList.remove("hidden");
         }
+
         function closeEditLogModal() {
             document.getElementById("editLogModal").classList.add("hidden");
             currentEditingLogId = null;
+            editModalPhotoSelections = [];
         }
+
         function saveEditedLog() {
             const pain = document.getElementById("painInput").value;
             const auraDuration = document.getElementById("auraDurationInput").value;
             const triggers = document.getElementById("triggersInput").value;
             const auraDescription = document.getElementById("auraDescriptionInput").value;
             const auraHeadache = document.getElementById("auraHeadacheInput").checked ? "Yes" : "No";
+
             const logEntry = logEntries.find(entry => entry.id === currentEditingLogId);
+
             if (pain !== "") logEntry.pain = pain;
             if (auraDuration !== "") logEntry.auraDuration = auraDuration + " mins";
             if (triggers !== "") logEntry.triggers = triggers;
             if (auraDescription !== "") logEntry.auraDescription = auraDescription;
             logEntry.auraHeadache = auraHeadache;
+
+         / S        tos
+            logEntr                oSelections;
+
             updateLogCard(logEntry);
             closeEditLogModal();
+            showToast("Log entry updated successfully!");
         }
+
+          tialize chart o                    art(0, false);
     </script>
 
     <!-- Advanced Log Wizard Template -->
