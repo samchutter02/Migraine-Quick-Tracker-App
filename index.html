@@ -4,17 +4,26 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quick Track v6.1</title>
+    <title>Quick Track v6.2 - samcwebdev</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Background and typography */
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(120deg, #1a1a4a, #3a3a8a, #6a3aaa, #9a5ada);
-
+            background: linear-gradient(120deg, #1a1a4a, #3a3a8a, #6a3aaa, #d65ada);
             background-attachment: fixed;
             background-size: cover;
             color: white;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
 
         /* Glass card styling */
@@ -81,21 +90,21 @@
         .photo-select {
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.15s ease;
             border-radius: 10px;
             background: rgba(255, 255, 255, 0.1);
             border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         .photo-select:hover {
-            transform: scale(1.05);
+            transform: scale(1.04);
             background: rgba(255, 255, 255, 0.2);
             border-color: rgba(255, 255, 255, 0.4);
             box-shadow: 0 8px 15px rgba(96, 41, 171, 0.3);
         }
 
         .photo-select.selected {
-            border: 7px outset #d400ff;
+            border: 5px solid #0800ff;
             box-shadow: 0 0 20px rgba(138, 79, 201, 0.5);
             background: rgba(138, 79, 201, 0.1);
         }
@@ -226,8 +235,10 @@
         /* History Container Styles */
         /* Base History Tab Styles */
         #historyTab {
+            background: transparent;
             min-height: 100vh;
-            padding: 1rem;
+            position: relative;
+            z-index: 1;
         }
 
         /* History Container */
@@ -238,6 +249,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0.5rem;
+            background: transparent;
         }
 
         /* History Header */
@@ -494,21 +506,29 @@
             /* Landing page adjustments */
             body {
                 background: linear-gradient(120deg, #1a1a4a, #3a3a8a, #6a3aaa, #9a5ada);
-                background-attachment: scroll;
+                background-attachment: fixed;
                 background-size: cover;
             }
 
+            html,
+            body {
+                overscroll-behavior-y: auto;
+                overflow-y: auto;
+            }
+
             #landingPage {
-                position: absolute;
-                top: 0;
-                left: 0;
+                position: relative;
+                /* Changed from absolute */
                 width: 100%;
                 min-height: 100vh;
-                overflow-y: scroll;
+                overflow-y: auto;
+                /* Proper scrolling */
+                overflow-x: hidden;
                 padding: 1rem;
                 display: flex;
                 flex-direction: column;
-                justify-content: center;
+                justify-content: flex-start;
+                /* Align to top instead of center */
                 align-items: center;
                 background: linear-gradient(120deg, #090017, #220a47, #4e0f8d, #006b95);
                 background-attachment: scroll;
@@ -556,12 +576,42 @@
             }
 
 
+            #historyTab {
+                background: transparent;
+            }
 
+            .history-header {
+                background: rgba(40, 40, 100, 0.8);
+                /* Darker, less transparent background */
+                backdrop-filter: blur(5px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .history-header h2 {
+                color: rgba(255, 255, 255, 0.9);
+                /* Ensure title is visible */
+            }
+
+            /* Fix for filter button */
+            .filter-button {
+                background: linear-gradient(to right, rgba(59, 130, 246, 0.7), rgba(147, 197, 253, 0.7));
+                border: 1px solid rgba(147, 197, 253, 0.5);
+                color: white;
+            }
+
+            .filter-button svg {
+                fill: rgba(255, 255, 255, 0.9);
+            }
+
+            #favoriteFilterStatus {
+                color: white;
+            }
 
             /* Card adjustments */
             .glass-card {
-                margin: 0.5rem;
-                padding: 0.75rem;
+                background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1));
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
             }
 
             /* Pills sizing on mobile */
@@ -588,9 +638,28 @@
                 height: 100px;
             }
 
+            .log-card {
+                background: rgba(30, 30, 60, 0.7);
+                /* Darker background with less transparency */
+                backdrop-filter: blur(5px);
+            }
+
             /* History cards */
             .log-card-content {
                 grid-template-columns: 1fr;
+            }
+
+            .log-card-inner {
+                background: rgba(40, 40, 80, 0.8);
+                /* Even more opacity for inner content */
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .info-value,
+            .info-label,
+            .timestamp-text {
+                color: rgba(255, 255, 255, 0.9) !important;
+                /* Enforce visible text */
             }
 
             .log-card-header {
@@ -647,6 +716,10 @@
                 height: auto;
                 aspect-ratio: 1;
             }
+
+            #mainApp::before {
+                display: none;
+            }
         }
 
         /* Additional responsive improvements */
@@ -695,7 +768,8 @@
         <!-- Instant Log Section -->
         <div class="bg-black bg-opacity-70 p-10 rounded-xl shadow-2xl max-w-3xl w-full text-center relative">
             <!-- Settings Icon -->
-            <button id="openSettingsLanding" class="absolute top-4 right-4 focus:outline-none max-sm:hidden" title="Settings">
+            <button id="openSettingsLanding" class="absolute top-4 right-4 focus:outline-none max-sm:hidden"
+                title="Settings">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-300 hover:text-blue-400" fill="none"
                     viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -781,7 +855,7 @@
                         d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 15h.01M12 7a3 3 0 013 3c0 1.5-1 2.5-2 3l-1 1" />
                 </svg>
             </button>
-            <h1 class="text-3xl font-extrabold text-center mb-4 mt-10 max-sm:hidden">Quick Track v6.1</h1>
+            <h1 class="text-3xl font-extrabold text-center mb-4 mt-10 max-sm:hidden">Quick Track v6.2</h1>
             <!-- Tabs Navigation -->
             <div class="flex justify-center gap-4 mb-6 border-b border-white/20">
                 <button class="tab-btn active max-sm:hidden" data-target="advancedTab"
@@ -861,22 +935,27 @@
                                 <img src="img/aura1.jpg" alt="Aura 1" title="Bright aura with scintillating scotoma">
                             </div>
                             <div class="photo-select" data-photo="img/aura2.jpg">
-                                <img src="img/aura2.jpg" alt="Aura 2" title="Blurry crescent shaped blind spot, little scotoma">
+                                <img src="img/aura2.jpg" alt="Aura 2"
+                                    title="Blurry crescent shaped blind spot, little scotoma">
                             </div>
                             <div class="photo-select" data-photo="img/aura3.jpg">
-                                <img src="img/aura3.jpg" alt="Aura 3" title="Large bright flashes or stationary 'light'">
+                                <img src="img/aura3.jpg" alt="Aura 3"
+                                    title="Large bright flashes or stationary 'light'">
                             </div>
                             <div class="photo-select" data-photo="img/aura4.jpg">
-                                <img src="img/aura4.jpg" alt="Aura 4" title="'Electric', jagged, rainbow scotoma that shimmers quickly">
+                                <img src="img/aura4.jpg" alt="Aura 4"
+                                    title="'Electric', jagged, rainbow scotoma that shimmers quickly">
                             </div>
                             <div class="photo-select" data-photo="img/aura5.jpg">
-                                <img src="img/aura5.jpg" alt="Aura 5" title="Broken glass like ring shaped aura, slight shimmering">
+                                <img src="img/aura5.jpg" alt="Aura 5"
+                                    title="Broken glass like ring shaped aura, slight shimmering">
                             </div>
                             <div class="photo-select" data-photo="img/aura6.jpg">
                                 <img src="img/aura6.jpg" alt="Aura 6" title="Overall blury vision, no scotoma">
                             </div>
                             <div class="photo-select" data-photo="img/aura7.jpg">
-                                <img src="img/aura7.jpg" alt="Aura 7" title="Jagged and wide rainbow scotoma, shimmering quickly">
+                                <img src="img/aura7.jpg" alt="Aura 7"
+                                    title="Jagged and wide rainbow scotoma, shimmering quickly">
                             </div>
                             <div class="photo-select" data-photo="img/aura8.jpg">
                                 <img src="img/aura8.jpg" alt="Aura 8" title="Shimmering patch of rainbow colored light">
@@ -885,13 +964,16 @@
                                 <img src="img/aura9.jpg" alt="Aura 9" title="Black and white shimmering scotoma">
                             </div>
                             <div class="photo-select" data-photo="img/aura10.jpg">
-                                <img src="img/aura10.jpg" alt="Aura 10" title="Geometric shimmering shape, almost invisible besides shimmering">
+                                <img src="img/aura10.jpg" alt="Aura 10"
+                                    title="Geometric shimmering shape, almost invisible besides shimmering">
                             </div>
                             <div class="photo-select" data-photo="img/aura11.jpg">
-                                <img src="img/aura11.jpg" alt="Aura 11" title="Blurry shimmering dot, expanding outwards towards peripheral vision">
+                                <img src="img/aura11.jpg" alt="Aura 11"
+                                    title="Blurry shimmering dot, expanding outwards towards peripheral vision">
                             </div>
                             <div class="photo-select" data-photo="img/aura12.jpg">
-                                <img src="img/aura12.jpg" alt="Aura 12" title="Drunk-like blurry vision, shimmering across entire field of view">
+                                <img src="img/aura12.jpg" alt="Aura 12"
+                                    title="Drunk-like blurry vision, shimmering across entire field of view">
                             </div>
                         </div>
                         <div class="mt-6">
@@ -915,8 +997,8 @@
                         <h2 class="text-2xl font-bold">History</h2>
                         <button class="filter-button max-sm:p-[4px] max-sm:ml-[20px]" onclick="toggleFavoriteFilter()"
                             id="favoriteFilterButton">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 max-sm:h-3 max-sm:w-3" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 max-sm:h-3 max-sm:w-3" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                             </svg>
@@ -1075,8 +1157,9 @@
         <div class="absolute inset-0 modal-backdrop"></div>
         <div class="relative glass-card rounded-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <h2 class="text-2xl font-bold mb-4 text-white">Edit Log Entry</h2>
-<!-- Basic Info Section -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+            <!-- Basic Info Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
                     <label for="painInput" class="block mb-1 text-white">Pain (1-10)</label>
                     <input id="painInput" type="number" min="1" max="10"
@@ -1089,8 +1172,9 @@
                 </div>
                 <div class="md:col-span-2">
                     <label for="triggersInput" class="block mb-1 text-white">Triggers (comma separated)</label>
-                    <input id="triggersInput" type="text" class="w-full p-2 rounded-md bg-white/20 border-none outline-none">
-                    </div>
+                    <input id="triggersInput" type="text"
+                        class="w-full p-2 rounded-md bg-white/20 border-none outline-none">
+                </div>
                 <div class="md:col-span-2">
                     <label for="auraDescriptionInput" class="block mb-1 text-white">Aura Description</label>
                     <textarea id="auraDescriptionInput" rows="3"
@@ -1101,12 +1185,12 @@
                     <label for="auraHeadacheInput" class="ml-2 text-white">Aura followed by headache?</label>
                 </div>
             </div>
-            
+
             <!-- Photo Selection Section -->
             <div class="mb-6">
                 <h3 class="text-xl font-semibold mb-3 text-white">Visual Aura Photos</h3>
                 <p class="text-sm text-gray-300 mb-4">Select photos that represent your visual aura:</p>
-            
+
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="editPhotoSelection">
                     <div class="photo-select" data-photo="img/aura1.jpg">
                         <img src="img/aura1.jpg" alt="Aura 1" title="Bright aura with scintillating scotoma">
@@ -1118,16 +1202,19 @@
                         <img src="img/aura3.jpg" alt="Aura 3" title="Large bright flashes or stationary 'light'">
                     </div>
                     <div class="photo-select" data-photo="img/aura4.jpg">
-                        <img src="img/aura4.jpg" alt="Aura 4" title="'Electric', jagged, rainbow scotoma that shimmers quickly">
+                        <img src="img/aura4.jpg" alt="Aura 4"
+                            title="'Electric', jagged, rainbow scotoma that shimmers quickly">
                     </div>
                     <div class="photo-select" data-photo="img/aura5.jpg">
-                        <img src="img/aura5.jpg" alt="Aura 5" title="Broken glass like ring shaped aura, slight shimmering">
+                        <img src="img/aura5.jpg" alt="Aura 5"
+                            title="Broken glass like ring shaped aura, slight shimmering">
                     </div>
                     <div class="photo-select" data-photo="img/aura6.jpg">
                         <img src="img/aura6.jpg" alt="Aura 6" title="Overall blury vision, no scotoma">
                     </div>
                     <div class="photo-select" data-photo="img/aura7.jpg">
-                        <img src="img/aura7.jpg" alt="Aura 7" title="Jagged and wide rainbow scotoma, shimmering quickly">
+                        <img src="img/aura7.jpg" alt="Aura 7"
+                            title="Jagged and wide rainbow scotoma, shimmering quickly">
                     </div>
                     <div class="photo-select" data-photo="img/aura8.jpg">
                         <img src="img/aura8.jpg" alt="Aura 8" title="Shimmering patch of rainbow colored light">
@@ -1149,7 +1236,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Action Buttons -->
             <div class="flex justify-end gap-2 mt-4">
                 <button id="cancelEditLog" class="px-4 py-2 rounded-md bg-gray-600 hover:bg-gray-500 text-white"
@@ -1275,7 +1362,7 @@
             document.getElementById("defaultPainValue").textContent = e.target.value;
         });
 
-        // Initi    t med pills
+        // Initialize default med pills
         document.addEventListener("DOMContentLoaded", function () {
             const defaultMedPills = document.querySelectorAll("#defaultMedPills .pill");
             defaultMedPills.forEach(pill => {
@@ -1316,9 +1403,12 @@
             const photoEl = e.target.closest(".photo-select");
             if (photoEl) {
                 if (photoEl.parentElement.id === "photoSelection") {
-                                    photoEl.classL                                cted");
+                    photoEl.classList.toggle("selected");
                     updateWizardPhotoSelections();
-                                   if (photoEl.parentElement.id === "editPhotoSelect                                                                                        classList.toggle("selecte                                                     updateEditModalPhotoSelecti                                                               }
+                } else if (photoEl.parentElement.id === "editPhotoSelection") {
+                    photoEl.classList.toggle("selected");
+                    updateEditModalPhotoSelections();
+                }
             }
         });
 
@@ -1350,9 +1440,11 @@
             });
         }
 
-                  on up    lPhotoSelections() {
-            edi            s = [];
-                           cument.querySelectorAll("#editPhotoSelection .photo-select.se                    uttons.forEac                            PhotoSelections.push(b                a-photo"));
+        function updateEditModalPhotoSelections() {
+            editModalPhotoSelections = [];
+            const photoButtons = document.querySelectorAll("#editPhotoSelection .photo-select.selected");
+            photoButtons.forEach(btn => {
+                editModalPhotoSelections.push(btn.getAttribute("data-photo"));
             });
         }
 
@@ -1598,29 +1690,39 @@
             document.getElementById("photoModal").classList.add("hidden");
         }
 
-              dal Functions
+        // Edit Log Modal Functions
         function openEditLogModal(logId) {
             currentEditingLogId = logId;
             const logEntry = logEntries.find(entry => entry.id === logId);
 
-                      rm values
-            document.getElementByI                                         logEntry.pain !==             Entr                 do    etE           at    ").                (logEntry.auraDuration              ion !== "Not set") ? parseIn        uraDuration) : "";
-            document.getElementByI        nput").value =
-             ntry         logEntry.trigger           ntry.triggers : "";
-            documen            raD    onInput").value =
-            (logEntry.auraD    on         Description !== "Not     logEntry.auraDescriptio                ment.getElementById("auraHeadacheInput").checked =
-          try.auraHeadache && logEntry.         !== "Not set" && logEntry.a    che    s");
+            // Set existing form values
+            document.getElementById("painInput").value =
+                (logEntry.pain && logEntry.pain !== "Not set") ? logEntry.pain : "";
+            document.getElementById("auraDurationInput").value =
+                (logEntry.auraDuration && logEntry.auraDuration !== "Not set") ? parseInt(logEntry.auraDuration) : "";
+            document.getElementById("triggersInput").value =
+                (logEntry.triggers && logEntry.triggers !== "Not set") ? logEntry.triggers : "";
+            document.getElementById("auraDescriptionInput").value =
+                (logEntry.auraDescription && logEntry.auraDescription !== "Not set") ? logEntry.auraDescription : "";
+            document.getElementById("auraHeadacheInput").checked =
+                (logEntry.auraHeadache && logEntry.auraHeadache !== "Not set" && logEntry.auraHeadache === "Yes");
 
-              ar     io        ections
-          cument.querySelectorAll("#editPhoto        ho    t").forEach(photo =                    assList.remove('selected');
-                        Set selected photos                   if (logEntry.photos && logEntry.photos.                          logEntry.photos.forEach(p        
-                         toEl = document        (`#editPhotoSelection [d          ;
+            // Clear all previous photo selections
+            document.querySelectorAll("#editPhotoSelection .photo-select").forEach(photo => {
+                photo.classList.remove('selected');
+            });
+
+            // Set selected photos if they exist
+            if (logEntry.photos && logEntry.photos.length > 0) {
+                logEntry.photos.forEach(photoUrl => {
+                    const photoEl = document.querySelector(`#editPhotoSelection [data-photo="${photoUrl}"]`);
                     if (photoEl) {
-                        photoEl.classList.add('selected'                   }
+                        photoEl.classList.add('selected');
+                    }
                 });
-                           lections = [...logE        ;
+                editModalPhotoSelections = [...logEntry.photos];
             } else {
-                editMo        s = [];
+                editModalPhotoSelections = [];
             }
 
             document.getElementById("editLogModal").classList.remove("hidden");
@@ -1647,15 +1749,17 @@
             if (auraDescription !== "") logEntry.auraDescription = auraDescription;
             logEntry.auraHeadache = auraHeadache;
 
-         / S        tos
-            logEntr                oSelections;
+            // Save selected photos
+            logEntry.photos = editModalPhotoSelections;
 
             updateLogCard(logEntry);
             closeEditLogModal();
             showToast("Log entry updated successfully!");
         }
 
-          tialize chart o                    art(0, false);
+        // Initialize chart on page load
+        updateChart(0, false);
+
     </script>
 
     <!-- Advanced Log Wizard Template -->
@@ -1668,7 +1772,7 @@
                     class="w-full p-3 rounded-md bg-white/20 border-none outline-none" />
             </div>
             <p class="mb-4 text-lg text-gray-300">Please select the aura type(s) you experienced:</p>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="auraPillsWizard">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 justify-items-center" id="auraPillsWizard">
                 <button type="button" class="pill" data-aura="Flashing Lights">Flashing Lights</button>
                 <button type="button" class="pill" data-aura="Zigzag Patterns">Zigzag Patterns</button>
                 <button type="button" class="pill" data-aura="Blind Spots">Blind Spots</button>
@@ -1691,7 +1795,7 @@
         <div id="wizardStep2" class="wizard-step hidden">
             <h2 class="text-2xl font-bold mb-4">Step 2: Select Medications</h2>
             <p class="mb-4 text-lg text-gray-300">Please select the medication(s) you took:</p>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4" id="medPillsWizard">
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 justify-items-center" id="medPillsWizard">
                 <button type="button" class="pill" data-med="Ibuprofen">Ibuprofen</button>
                 <button type="button" class="pill" data-med="Acetaminophen">Acetaminophen</button>
                 <button type="button" class="pill" data-med="Aspirin">Aspirin</button>
@@ -1731,7 +1835,8 @@
                     <img src="img/aura3.jpg" alt="Aura 3" title="Large bright flashes or stationary 'light'">
                 </div>
                 <div class="photo-select" data-photo="img/aura4.jpg">
-                    <img src="img/aura4.jpg" alt="Aura 4" title="'Electric', jagged, rainbow scotoma that shimmers quickly">
+                    <img src="img/aura4.jpg" alt="Aura 4"
+                        title="'Electric', jagged, rainbow scotoma that shimmers quickly">
                 </div>
                 <div class="photo-select" data-photo="img/aura5.jpg">
                     <img src="img/aura5.jpg" alt="Aura 5" title="Broken glass like ring shaped aura, slight shimmering">
@@ -1749,13 +1854,16 @@
                     <img src="img/aura9.jpg" alt="Aura 9" title="Black and white shimmering scotoma">
                 </div>
                 <div class="photo-select" data-photo="img/aura10.jpg">
-                    <img src="img/aura10.jpg" alt="Aura 10" title="Geometric shimmering shape, almost invisible besides shimmering">
+                    <img src="img/aura10.jpg" alt="Aura 10"
+                        title="Geometric shimmering shape, almost invisible besides shimmering">
                 </div>
                 <div class="photo-select" data-photo="img/aura11.jpg">
-                    <img src="img/aura11.jpg" alt="Aura 11" title="Blurry shimmering dot, expanding outwards towards peripheral vision">
+                    <img src="img/aura11.jpg" alt="Aura 11"
+                        title="Blurry shimmering dot, expanding outwards towards peripheral vision">
                 </div>
                 <div class="photo-select" data-photo="img/aura12.jpg">
-                    <img src="img/aura12.jpg" alt="Aura 12" title="Drunk-like blurry vision, shimmering across entire field of view">
+                    <img src="img/aura12.jpg" alt="Aura 12"
+                        title="Drunk-like blurry vision, shimmering across entire field of view">
                 </div>
             </div>
             <div class="mt-6">
