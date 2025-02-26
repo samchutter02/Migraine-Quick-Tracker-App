@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Quick Track v6.2 - samcwebdev</title>
+    <title>Quick Track v7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Background and typography */
@@ -263,6 +263,10 @@
             border-radius: 0.75rem;
             border: 1px solid rgba(255, 255, 255, 0.05);
             margin-bottom: 1rem;
+        }
+
+        .delete-all-btn {
+            margin-left: auto;
         }
 
         .filter-button {
@@ -855,7 +859,7 @@
                         d="M12 2a10 10 0 1010 10A10 10 0 0012 2zm0 15h.01M12 7a3 3 0 013 3c0 1.5-1 2.5-2 3l-1 1" />
                 </svg>
             </button>
-            <h1 class="text-3xl font-extrabold text-center mb-4 mt-10 max-sm:hidden">Quick Track v6.2</h1>
+            <h1 class="text-3xl font-extrabold text-center mb-4 mt-10 max-sm:hidden">Quick Track v7</h1>
             <!-- Tabs Navigation -->
             <div class="flex justify-center gap-4 mb-6 border-b border-white/20">
                 <button class="tab-btn active max-sm:hidden" data-target="advancedTab"
@@ -884,7 +888,8 @@
                             <button type="button" class="pill" data-aura="Double Vision">Double Vision</button>
                             <button type="button" class="pill" data-aura="Numbness">Numbness</button>
                             <button type="button" class="pill" data-aura="Tingling">Tingling</button>
-                            <button type="button" class="pill" data-aura="Shakes / Tremors">Shakes / Tremors</button>
+                            <button type="button" class="pill" data-aura="Shakes / Tremors">Shakes /
+                                Tremors</button>
                             <button type="button" class="pill" data-aura="Weakness">Weakness</button>
                             <button type="button" class="pill" data-aura="Vertigo">Vertigo</button>
                             <button type="button" class="pill" data-aura="Speech">Speech Issues</button>
@@ -928,7 +933,8 @@
                     <!-- Wizard Step 3: Photo Selection -->
                     <div id="wizardStep3" class="wizard-step hidden">
                         <h2 class="text-2xl font-bold mb-4">Step 3: Select Visual Aura Photo(s)</h2>
-                        <p class="mb-4 text-lg text-gray-300">Please select one or more photos that best represent your
+                        <p class="mb-4 text-lg text-gray-300">Please select one or more photos that best represent
+                            your
                             visual aura:</p>
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 justify-items-center" id="photoSelection">
                             <div class="photo-select" data-photo="img/aura1.jpg">
@@ -995,6 +1001,10 @@
                 <div class="history-container">
                     <div class="history-header">
                         <h2 class="text-2xl font-bold">History</h2>
+                        <button onclick="deleteAllLogs()"
+                            class="action-btn delete-all-btn text-sm bg-red-600 hover:bg-red-700 rounded px-2 py-1 mr-3">
+                            Delete All
+                        </button>
                         <button class="filter-button max-sm:p-[4px] max-sm:ml-[20px]" onclick="toggleFavoriteFilter()"
                             id="favoriteFilterButton">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 max-sm:h-3 max-sm:w-3" fill="none"
@@ -1294,6 +1304,20 @@
             }
         }
 
+        // Save the current logs array to localStorage
+        function saveLogsToLocalStorage() {
+            localStorage.setItem('migraineLogs', JSON.stringify(logEntries));
+        }
+
+        // Load the logs from localStorage into your global logEntries array
+        function loadLogsFromLocalStorage() {
+            const storedLogs = localStorage.getItem('migraineLogs');
+            if (storedLogs) {
+                logEntries = JSON.parse(storedLogs);
+            }
+        }
+
+
         // Landing page functions
         function logQuickEpisode() {
             const dt = new Date().toLocaleString();
@@ -1353,10 +1377,16 @@
             const painInput = document.getElementById("defaultPain").value;
             defaultPain = painInput ? painInput : 5;
             defaultMed = selectedDefaultMed.length > 0 ? selectedDefaultMed : ["None"];
+
+            // Persist defaultMed and defaultPain to localStorage
+            localStorage.setItem("defaultMed", JSON.stringify(defaultMed));
+            localStorage.setItem("defaultPain", defaultPain);
+
             document.getElementById("defaultPainValue").textContent = defaultPain;
             showToast("Default settings saved!");
             closeSettings();
         }
+
 
         document.getElementById("defaultPain").addEventListener("input", (e) => {
             document.getElementById("defaultPainValue").textContent = e.target.value;
@@ -1389,6 +1419,25 @@
         function closeHelp() {
             document.getElementById("helpModal").classList.add("hidden");
         }
+
+        // Delete a single log entry by its id
+        function deleteLogEntry(logId) {
+            logEntries = logEntries.filter(entry => entry.id !== logId);
+            saveLogsToLocalStorage();
+            renderHistory();
+            showToast("Log entry deleted.");
+        }
+
+        // Delete all log entries with a confirmation prompt
+        function deleteAllLogs() {
+            if (confirm("Are you sure you want to delete all logs?")) {
+                logEntries = [];
+                localStorage.removeItem('migraineLogs');
+                renderHistory();
+                showToast("All logs deleted.");
+            }
+        }
+
 
         // Advanced Log Wizard Functions
         document.addEventListener("click", function (e) {
@@ -1483,12 +1532,16 @@
         }
 
         function submitAdvancedLog() {
+            // Ensure the wizard selection arrays are up-to-date
+            updateWizardAuraSelections();
             updateWizardMedSelections();
             updateWizardPhotoSelections();
+
             const dtValue = document.getElementById("dateTime").value;
             const dt = dtValue ? new Date(dtValue).toLocaleString() : new Date().toLocaleString();
             const auraInfo = wizardAuraSelections.length ? `Aura: [${wizardAuraSelections.join(", ")}]` : "No aura selected";
             const meds = wizardMedSelections.length ? wizardMedSelections.join(", ") : "No meds";
+
             const logEntry = {
                 id: nextLogId++,
                 time: dt,
@@ -1503,23 +1556,41 @@
                 photos: wizardPhotoSelections,
                 favorite: false
             };
+
             addLogEntry(logEntry);
             updateChart(0, false);
             showToast("Advanced log saved!");
+
+            // Clear wizard selections and reset UI
             wizardAuraSelections = [];
             wizardMedSelections = [];
             wizardPhotoSelections = [];
             document.querySelectorAll("#auraPillsWizard .pill").forEach(btn => btn.classList.remove("selected"));
             document.querySelectorAll("#medPillsWizard .pill").forEach(btn => btn.classList.remove("selected"));
             document.querySelectorAll("#photoSelection .photo-select").forEach(btn => btn.classList.remove("selected"));
+
             goHome();
-        }// History and Favorites Functions
+        }
+        // History and Favorites Functions
         function createLogCard(entry) {
-            let card = document.createElement("div");
+            const card = document.createElement("div");
             card.className = `log-card ${entry.quick ? 'quick' : 'advanced'}`;
             card.setAttribute("data-log-id", entry.id);
 
-            let cardContent = `
+            // Build photos HTML if available
+            let photosHtml = "";
+            if (entry.photos && entry.photos.length > 0) {
+                photosHtml = `
+      <div class="photos-section">
+        <div class="photos-grid">
+          ${entry.photos.map(photo => `<img src="${photo}" alt="Aura Photo" class="aura-photo">`).join('')}
+        </div>
+      </div>
+    `;
+            }
+
+            // Build the inner content of the card with one favorite, one edit, and one delete button.
+            const cardContent = `
     <div class="log-card-inner">
       <div class="log-card-header">
         <div class="log-timestamp">
@@ -1533,112 +1604,61 @@
           <button onclick="toggleFavorite(${entry.id})" class="favorite-btn ${entry.favorite ? 'active' : ''}">
             ${entry.favorite ?
                     `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.447a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.37 2.447c-.784.57-1.84-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.642 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z"/>
-              </svg>` :
+                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.447a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.37 2.447c-.784.57-1.84-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.642 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z"/>
+               </svg>` :
                     `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.447a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.37 2.447c-.784.57-1.84-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.642 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z"/>
-              </svg>`
-                }
+                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                   d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.955a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.447a1 1 0 00-.364 1.118l1.286 3.955c.3.921-.755 1.688-1.54 1.118L10 13.347l-3.37 2.447c-.784.57-1.84-.197-1.54-1.118l1.286-3.955a1 1 0 00-.364-1.118L2.642 9.382c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.955z"/>
+               </svg>`}
+          </button>
+          <button onclick="event.stopPropagation(); openEditModal(${entry.id});" class="action-btn edit text-sm bg-blue-600 hover:bg-blue-700 rounded px-2 py-1">
+  Edit
+</button>
+
+          <button onclick="event.stopPropagation(); deleteLogEntry(${entry.id});" class="action-btn delete text-sm bg-red-600 hover:bg-red-700 rounded px-2 py-1">
+            Delete
           </button>
         </div>
       </div>
-
-      <div class="log-card-content">`;
-
-            // Primary Information
-            if (entry.quick) {
-                cardContent += `
-      <div class="info-group">
-        <div class="info-label">Default Medications</div>
-        <div class="info-value">${entry.meds}</div>
-      </div>`;
-            } else {
-                cardContent += `
-      <div class="info-group">
-        <div class="info-label">Medications</div>
-        <div class="info-value">${entry.meds}</div>
-      </div>
-      <div class="info-group">
-        <div class="info-label">Aura Types</div>
-        <div class="info-value">${entry.aura}</div>
-      </div>`;
-            }
-
-            // Pain and Duration
-            if (entry.pain && entry.pain !== "Not set") {
-                cardContent += `
-      <div class="info-group">
-        <div class="info-label">Pain Level</div>
-        <div class="info-value">${entry.pain}</div>
-      </div>`;
-            }
-
-            if (entry.auraDuration && entry.auraDuration !== "Not set") {
-                cardContent += `
-      <div class="info-group">
-        <div class="info-label">Aura Duration</div>
-        <div class="info-value">${entry.auraDuration}</div>
-      </div>`;
-            }
-
-            // Aura Headache Status
-            if (entry.auraHeadache && entry.auraHeadache !== "Not set") {
-                cardContent += `
-      <div class="info-group">
-        <div class="info-label">Aura Followed by Headache</div>
-        <div class="info-value">${entry.auraHeadache}</div>
-      </div>`;
-            }
-
-            // Triggers
-            if (entry.triggers && entry.triggers !== "Not set") {
-                cardContent += `
-      <div class="info-group full-width">
-        <div class="info-label">Triggers</div>
-        <div class="info-value">${entry.triggers}</div>
-      </div>`;
-            }
-
-            // Aura Description
-            if (entry.auraDescription && entry.auraDescription !== "Not set") {
-                cardContent += `
-      <div class="info-group full-width">
-        <div class="info-label">Aura Description</div>
-        <div class="info-value">${entry.auraDescription}</div>
-      </div>`;
-            }
-
-            // Photos
-            if (entry.photos && entry.photos.length > 0) {
-                cardContent += `
-      <div class="photos-section">
-        <div class="info-label">Aura Photos</div>
-        <div class="photos-grid">
-          ${entry.photos.map(photoUrl => `
-            <img src="${photoUrl}" alt="Aura Photo" class="aura-photo cursor-pointer" 
-              onclick="openPhotoModal('${photoUrl}')">
-          `).join('')}
+      <div class="log-card-content">
+        <div class="info-group full-width">
+          <div class="info-label">Aura:</div>
+          <div class="info-value">${entry.aura}</div>
         </div>
-      </div>`;
-            }
-
-            // Actions
-            cardContent += `
+        <div class="info-group">
+          <div class="info-label">Medications:</div>
+          <div class="info-value">${entry.meds}</div>
+        </div>
+        <div class="info-group">
+          <div class="info-label">Pain:</div>
+          <div class="info-value">${entry.pain}</div>
+        </div>
+        <div class="info-group">
+          <div class="info-label">Aura Duration:</div>
+          <div class="info-value">${entry.auraDuration}</div>
+        </div>
+        <div class="info-group full-width">
+          <div class="info-label">Triggers:</div>
+          <div class="info-value">${entry.triggers}</div>
+        </div>
+        <div class="info-group full-width">
+          <div class="info-label">Aura Description:</div>
+          <div class="info-value">${entry.auraDescription}</div>
+        </div>
+        <div class="info-group">
+          <div class="info-label">Aura Headache:</div>
+          <div class="info-value">${entry.auraHeadache}</div>
+        </div>
+        ${photosHtml}
       </div>
-      <div class="card-actions">
-        <button class="action-btn edit" onclick="openEditLogModal(${entry.id})">
-          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-              d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-          </svg>
-          Edit Details
-        </button>
-      </div>
-    </div>`;
+    </div>
+  `;
 
             card.innerHTML = cardContent;
             return card;
         }
+
+
 
         function renderHistory() {
             const logContainer = document.getElementById("logHistory");
@@ -1655,8 +1675,14 @@
 
         function addLogEntry(entry) {
             logEntries.push(entry);
+            saveLogsToLocalStorage();
             renderHistory();
         }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadLogsFromLocalStorage();
+            renderHistory(); // Populate the history tab with the loaded logs
+        });
 
         function updateLogCard(logEntry) {
             renderHistory();
@@ -1691,42 +1717,39 @@
         }
 
         // Edit Log Modal Functions
-        function openEditLogModal(logId) {
+        function openEditModal(logId) {
+            console.log("openEditModal called for id", logId); // for debugging
             currentEditingLogId = logId;
-            const logEntry = logEntries.find(entry => entry.id === logId);
-
-            // Set existing form values
-            document.getElementById("painInput").value =
-                (logEntry.pain && logEntry.pain !== "Not set") ? logEntry.pain : "";
-            document.getElementById("auraDurationInput").value =
-                (logEntry.auraDuration && logEntry.auraDuration !== "Not set") ? parseInt(logEntry.auraDuration) : "";
-            document.getElementById("triggersInput").value =
-                (logEntry.triggers && logEntry.triggers !== "Not set") ? logEntry.triggers : "";
-            document.getElementById("auraDescriptionInput").value =
-                (logEntry.auraDescription && logEntry.auraDescription !== "Not set") ? logEntry.auraDescription : "";
-            document.getElementById("auraHeadacheInput").checked =
-                (logEntry.auraHeadache && logEntry.auraHeadache !== "Not set" && logEntry.auraHeadache === "Yes");
-
-            // Clear all previous photo selections
-            document.querySelectorAll("#editPhotoSelection .photo-select").forEach(photo => {
-                photo.classList.remove('selected');
-            });
-
-            // Set selected photos if they exist
-            if (logEntry.photos && logEntry.photos.length > 0) {
-                logEntry.photos.forEach(photoUrl => {
-                    const photoEl = document.querySelector(`#editPhotoSelection [data-photo="${photoUrl}"]`);
-                    if (photoEl) {
-                        photoEl.classList.add('selected');
-                    }
-                });
-                editModalPhotoSelections = [...logEntry.photos];
-            } else {
-                editModalPhotoSelections = [];
+            const logEntry = logEntries.find(entry => entry.id == logId);
+            if (!logEntry) {
+                showToast("Log entry not found.");
+                return;
             }
 
+            // Populate modal fields
+            document.getElementById("painInput").value = logEntry.pain !== "Not set" ? logEntry.pain : "";
+            document.getElementById("auraDurationInput").value = logEntry.auraDuration !== "Not set" ? logEntry.auraDuration : "";
+            document.getElementById("triggersInput").value = logEntry.triggers !== "Not set" ? logEntry.triggers : "";
+            document.getElementById("auraDescriptionInput").value = logEntry.auraDescription !== "Not set" ? logEntry.auraDescription : "";
+            document.getElementById("auraHeadacheInput").checked = (logEntry.auraHeadache === "Yes" || logEntry.auraHeadache === true);
+
+            // Reset and then set photo selections
+            document.querySelectorAll("#editPhotoSelection .photo-select").forEach(photoEl => {
+                photoEl.classList.remove("selected");
+            });
+            if (logEntry.photos && logEntry.photos.length > 0) {
+                document.querySelectorAll("#editPhotoSelection .photo-select").forEach(photoEl => {
+                    const photoData = photoEl.getAttribute("data-photo");
+                    if (logEntry.photos.includes(photoData)) {
+                        photoEl.classList.add("selected");
+                    }
+                });
+            }
+
+            // Show the edit modal
             document.getElementById("editLogModal").classList.remove("hidden");
         }
+
 
         function closeEditLogModal() {
             document.getElementById("editLogModal").classList.add("hidden");
@@ -1735,27 +1758,90 @@
         }
 
         function saveEditedLog() {
+            // Retrieve updated values from modal inputs
             const pain = document.getElementById("painInput").value;
             const auraDuration = document.getElementById("auraDurationInput").value;
             const triggers = document.getElementById("triggersInput").value;
             const auraDescription = document.getElementById("auraDescriptionInput").value;
             const auraHeadache = document.getElementById("auraHeadacheInput").checked ? "Yes" : "No";
 
-            const logEntry = logEntries.find(entry => entry.id === currentEditingLogId);
+            // Retrieve selected photos from the edit modal
+            const selectedPhotos = [];
+            document.querySelectorAll("#editPhotoSelection .photo-select.selected").forEach(el => {
+                selectedPhotos.push(el.getAttribute("data-photo"));
+            });
 
-            if (pain !== "") logEntry.pain = pain;
-            if (auraDuration !== "") logEntry.auraDuration = auraDuration + " mins";
-            if (triggers !== "") logEntry.triggers = triggers;
-            if (auraDescription !== "") logEntry.auraDescription = auraDescription;
-            logEntry.auraHeadache = auraHeadache;
+            // Debug: log the new values
+            console.log("Saving edited log:", {
+                pain,
+                auraDuration,
+                triggers,
+                auraDescription,
+                auraHeadache,
+                selectedPhotos
+            });
 
-            // Save selected photos
-            logEntry.photos = editModalPhotoSelections;
+            // Find the log entry by currentEditingLogId
+            const logIndex = logEntries.findIndex(entry => entry.id === currentEditingLogId);
+            if (logIndex === -1) {
+                showToast("Error: Log entry not found.");
+                return;
+            }
 
-            updateLogCard(logEntry);
-            closeEditLogModal();
-            showToast("Log entry updated successfully!");
+            // Update the log entry in the global array
+            logEntries[logIndex].pain = pain || "Not set";
+            logEntries[logIndex].auraDuration = auraDuration || "Not set";
+            logEntries[logIndex].triggers = triggers || "Not set";
+            logEntries[logIndex].auraDescription = auraDescription || "Not set";
+            logEntries[logIndex].auraHeadache = auraHeadache;
+            logEntries[logIndex].photos = selectedPhotos;
+
+            // Debug: log the updated log entry
+            console.log("Updated log entry:", logEntries[logIndex]);
+
+            // Save the updated array to localStorage and re-render the history
+            saveLogsToLocalStorage();
+            renderHistory();
+
+            // Hide the edit modal and notify the user
+            document.getElementById("editLogModal").classList.add("hidden");
+            showToast("Log updated successfully.");
         }
+
+        function loadDefaultSettings() {
+            const storedDefaultMed = localStorage.getItem("defaultMed");
+            if (storedDefaultMed) {
+                defaultMed = JSON.parse(storedDefaultMed);
+                // Optionally, update your default med pills UI to reflect these selections
+                // For example:
+                document.querySelectorAll("#defaultMedPills .pill").forEach(pill => {
+                    if (defaultMed.includes(pill.dataset.med)) {
+                        pill.classList.add("selected");
+                        // Also update selectedDefaultMed to match
+                        if (!selectedDefaultMed.includes(pill.dataset.med)) {
+                            selectedDefaultMed.push(pill.dataset.med);
+                        }
+                    } else {
+                        pill.classList.remove("selected");
+                    }
+                });
+            }
+
+            const storedDefaultPain = localStorage.getItem("defaultPain");
+            if (storedDefaultPain) {
+                defaultPain = storedDefaultPain;
+                document.getElementById("defaultPain").value = defaultPain;
+                document.getElementById("defaultPainValue").textContent = defaultPain;
+            }
+        }
+
+        // Call loadDefaultSettings on DOMContentLoaded
+        document.addEventListener("DOMContentLoaded", function () {
+            loadDefaultSettings();
+            // Existing code to initialize default med pills etc.
+        });
+
+
 
         // Initialize chart on page load
         updateChart(0, false);
